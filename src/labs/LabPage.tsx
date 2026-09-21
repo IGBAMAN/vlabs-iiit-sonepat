@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
 import { MathText } from '@/ui/Math';
@@ -89,6 +89,20 @@ function ExpandIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <path d="M5 2L9 7L5 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function ArrowLeftIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M8.5 3.5L5 7L8.5 10.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function ArrowRightIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M5.5 3.5L9 7L5.5 10.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   );
 }
@@ -235,7 +249,7 @@ function SceneRenderer({ section, circuit, sceneStepIndex, activeMarkers }: {
   }
   // For text-only labs (labType === 'text'), do not render a bare breadboard
   // when there is no real circuit — return null so sections show cleanly.
-  if (circuit.id === '__breadboard' && section.type !== 'text' && section.type !== 'apparatus') {
+  if (circuit.id === '__breadboard' && section.type !== 'text') {
     return null;
   }
   // Procedure / observation / conclusion / theory without schematic: show breadboard
@@ -263,6 +277,44 @@ export function LabPage({ content }: Props) {
   const [procedureStepIndex, setProcedureStepIndex] = useState(0);
 
   const activeSection = content.sections.find((s) => s.id === activeSectionId) ?? content.sections[0];
+
+  type NavItem = { section: LabSection; stepIndex: number; label: string };
+
+  const navItems = useMemo<NavItem[]>(() => {
+    return content.sections.flatMap((section): NavItem[] => {
+      if (section.type === 'procedure') {
+        return section.steps.map((step, i) => ({ section, stepIndex: i, label: step.label || `Step ${i + 1}` }));
+      }
+      return [{ section, stepIndex: 0, label: section.title }];
+    });
+  }, [content.sections]);
+
+  const currentIndex = navItems.findIndex(
+    item => item.section.id === activeSectionId && item.stepIndex === procedureStepIndex
+  );
+
+  const handleNav = useCallback((index: number) => {
+    if (index >= 0 && index < navItems.length) {
+      const target = navItems[index];
+      setActiveSectionId(target.section.id);
+      setProcedureStepIndex(target.stepIndex);
+      if (target.section.type === 'procedure') {
+        setExpandedProcedureId(target.section.id);
+      }
+    }
+  }, [navItems]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        handleNav(currentIndex + 1);
+      } else if (e.key === 'ArrowLeft') {
+        handleNav(currentIndex - 1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex, handleNav]);
 
   const circuit: Circuit = ALL_CIRCUITS.find((c) => c.id === content.circuitId) ?? BREADBOARD_ONLY;
 
@@ -413,6 +465,36 @@ export function LabPage({ content }: Props) {
             />
           </FloatingLabCard>
         )}
+
+        {/* Floating Navigation Pill */}
+        <div className="absolute top-6 right-6 flex items-center p-1.5 gap-1.5 bg-white/90 backdrop-blur-md border border-[var(--color-black-10)] rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.04)] z-[100] transition-transform duration-300">
+          <button
+            onClick={() => handleNav(currentIndex - 1)}
+            disabled={currentIndex <= 0}
+            className="appearance-none flex items-center justify-center w-10 h-10 rounded-full border-none outline-none bg-transparent cursor-pointer text-[var(--ink-muted)] hover:bg-[var(--color-black-5)] hover:text-[var(--ink)] disabled:opacity-40 disabled:pointer-events-none transition-all"
+            aria-label="Previous step"
+          >
+            <ArrowLeftIcon />
+          </button>
+          
+          <div className="flex flex-col items-center justify-center px-4 min-w-[140px] select-none">
+            <span className="text-[10px] font-semibold tracking-[0.04em] text-[var(--ink-muted)] uppercase mb-0.5">
+              {navItems[currentIndex]?.section.title || 'Step'}
+            </span>
+            <span className="text-[13px] font-medium text-[var(--ink)] truncate max-w-[160px]">
+              {navItems[currentIndex]?.label || ''}
+            </span>
+          </div>
+
+          <button
+            onClick={() => handleNav(currentIndex + 1)}
+            disabled={currentIndex >= navItems.length - 1}
+            className="appearance-none flex items-center justify-center w-10 h-10 rounded-full border-none outline-none bg-[var(--color-black-5)] cursor-pointer text-[var(--ink)] hover:bg-[var(--color-black-10)] disabled:opacity-40 disabled:pointer-events-none transition-all"
+            aria-label="Next step"
+          >
+            <ArrowRightIcon />
+          </button>
+        </div>
       </div>
     </div>
   );

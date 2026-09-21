@@ -1,21 +1,19 @@
 import { buildCircuit, buildLabContent } from '@/labs/experiments/build';
 import { type ExperimentDefinition } from '@/labs/experiments/types';
 
-import { aim }          from './01-aim';
-import { theory }       from './02-theory';
-import { apparatus }    from './03-apparatus';
-import { observations } from './05-observations';
-import { conclusion }   from './06-conclusion';
-import { components }   from './components';
+import { aim } from './01-aim';
+import { theory } from './02-theory';
+import { apparatus } from './03-apparatus';
+import { components } from './components';
 import { procedureSteps } from './04-procedure';
+import { observations } from './05-observations';
+import { conclusion } from './06-conclusion';
 
 export const halfWaveRectifierExperiment: ExperimentDefinition = {
   id: 'half-wave-rectifier',
   title: 'Half-Wave Rectifier',
   description:
-    'A half-wave rectifier using a single diode. '
-    + 'Only the positive half-cycle of the AC input passes to the 1 k$\\Omega$ load. '
-    + 'Voltmeter probes across the load show the pulsating DC output.',
+    'Study a diode-based half-wave rectifier: observe conduction during the positive half-cycle, measure the unfiltered DC output, then add a filter capacitor to smooth ripple.',
   components,
   sections: [aim, theory, apparatus, observations, conclusion],
   procedureSteps,
