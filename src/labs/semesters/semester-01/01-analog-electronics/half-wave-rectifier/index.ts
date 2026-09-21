@@ -1,0 +1,25 @@
+import { buildCircuit, buildLabContent } from '@/labs/experiments/build';
+import { type ExperimentDefinition } from '@/labs/experiments/types';
+
+import { aim }          from './01-aim';
+import { theory }       from './02-theory';
+import { apparatus }    from './03-apparatus';
+import { observations } from './05-observations';
+import { conclusion }   from './06-conclusion';
+import { components }   from './components';
+import { procedureSteps } from './04-procedure';
+
+export const halfWaveRectifierExperiment: ExperimentDefinition = {
+  id: 'half-wave-rectifier',
+  title: 'Half-Wave Rectifier',
+  description:
+    'A half-wave rectifier using a single diode. '
+    + 'Only the positive half-cycle of the AC input passes to the 1 k$\\Omega$ load. '
+    + 'Voltmeter probes across the load show the pulsating DC output.',
+  components,
+  sections: [aim, theory, apparatus, observations, conclusion],
+  procedureSteps,
+};
+
+export const HalfWaveRectifierCircuit = buildCircuit(halfWaveRectifierExperiment);
+export const HalfWaveRectifierContent = buildLabContent(halfWaveRectifierExperiment);

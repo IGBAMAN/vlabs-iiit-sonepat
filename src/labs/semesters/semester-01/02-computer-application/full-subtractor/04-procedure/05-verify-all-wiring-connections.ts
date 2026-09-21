@@ -1,0 +1,37 @@
+import { type SceneProcedureStep } from '@/labs/experiments/types';
+
+export const step: SceneProcedureStep = {
+  label: "Verify all wiring connections",
+  body: "Before applying power, trace every wire: A must reach XOR1 pin 1, NOT pin 1; B must reach XOR1 pin 2, AND1 pin 2, AND2 pin 4; Bin must reach XOR2 pin 5, AND2 pin 5, AND3 pin 9; P (XOR1 out) must reach XOR2 pin 4. Confirm all unused gate inputs are tied to GND (not left floating, as floating CMOS inputs can oscillate and consume excess power).",
+  show: [
+    "bb",
+    "xor1",
+    "xor2",
+    "not1",
+    "and1",
+    "and2",
+    "and3",
+    "or1",
+    "or2",
+    "w_a_xor1",
+    "w_b_xor1",
+    "w_bin_xor2",
+    "w_d1_xor2",
+    "w_a_not",
+    "w_nota_and1",
+    "w_b_and1",
+    "w_nota_and2",
+    "w_bin_and2",
+    "w_b_and3",
+    "w_bin_and3",
+    "w_and1_or1",
+    "w_and2_or1",
+    "w_or1_or2",
+    "w_and3_or2",
+  ],
+  activeInputs: {
+    A: 0,
+    B: 0,
+    Bin: 0,
+  },
+};

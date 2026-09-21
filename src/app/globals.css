@@ -1,0 +1,400 @@
+@import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
+
+/*
+ * Tailwind v4 CSS-first configuration
+ * Replaces the Linaria token system (src/tokens/css-variables.ts)
+ */
+
+/* ─── Custom theme ─────────────────────────────────────────────────── */
+@theme {
+  /* Breakpoints (screens) */
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 921px;
+  --breakpoint-lg: 1281px;
+
+  /* Shadows */
+  --shadow-header: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  --shadow-popup: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-popup-dark: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 12px 32px -16px rgba(0, 0, 0, 0.18);
+
+  /* z-index */
+  --z-base: 0;
+  --z-drawer: 90;
+  --z-floating-nav: 100;
+  --z-sticky-header: 200;
+  --z-modal: 300;
+  --z-portal: 400;
+
+  /* Transition durations */
+  --duration-xxs: 150ms;
+  --duration-xs: 200ms;
+  --duration-sm: 220ms;
+  --duration-md: 300ms;
+  --duration-lg: 400ms;
+  --duration-xl: 600ms;
+
+  /* Transition timing functions (easing) */
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-gentle: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Font families */
+  --font-sans: var(--font-sans-var), sans-serif;
+  --font-serif: var(--font-serif-var), serif;
+  --font-mono: var(--font-mono-var), monospace;
+}
+
+/* ─── Design token CSS custom properties ───────────────────────────── */
+/* These are consumed by the JS token helpers: color(), spacing(), radius(), etc. */
+:root {
+  /* ── Palette colors ── */
+  --color-white: #ffffff;
+  --color-black: #1c1c1c;
+  --color-black-hover: #333333;
+  --color-white-hover: #e8e8e8;
+  --color-graphite: #424242;
+  --color-silver: #dbdbdb;
+  --color-neutral: #f4f4f4;
+  --color-blue: #4a38f5;
+  --color-pink: #ed87fc;
+  --color-green: #89fc9a;
+  --color-yellow: #feffb7;
+  --color-error: #ff9a9a;
+  --color-ash: #bababa;
+  --color-fog: #dddddd;
+  --color-charcoal: #2a2a2a;
+  --color-stone: #959595;
+  --color-iron: #777777;
+  --color-chalk: #f3f3f3;
+
+  /* ── Alpha scale: black ── */
+  --color-black-80: #1c1c1ccc;
+  --color-black-70: #1c1c1cb3;
+  --color-black-60: #1c1c1c99;
+  --color-black-40: #1c1c1c66;
+  --color-black-20: #1c1c1c33;
+  --color-black-10: #1c1c1c1a;
+  --color-black-5: #1c1c1c0d;
+
+  /* ── Alpha scale: blue ── */
+  --color-blue-80: #4a38f5cc;
+  --color-blue-70: #4a38f5b3;
+  --color-blue-60: #4a38f599;
+  --color-blue-40: #4a38f566;
+  --color-blue-20: #4a38f533;
+  --color-blue-10: #4a38f51a;
+  --color-blue-5: #4a38f50d;
+
+  /* ── Alpha scale: white ── */
+  --color-white-80: #ffffffcc;
+  --color-white-70: #ffffffb3;
+  --color-white-60: #ffffff99;
+  --color-white-40: #ffffff66;
+  --color-white-20: #ffffff33;
+  --color-white-10: #ffffff1a;
+  --color-white-5: #ffffff0d;
+
+  /* ── Foundation units ── */
+  --spacing-base: 4px;
+  --font-base: 0.25rem;
+  --radius-base: 2px;
+
+  /* ── Semantic colors (light scheme default) ── */
+  --surface: var(--color-white);
+  --ink: var(--color-black);
+  --ink-muted: var(--color-black-60);
+  --ink-subtle: var(--color-black-40);
+  --line: var(--color-black-10);
+  --line-strong: var(--color-black-20);
+  --divider: var(--color-black-40);
+
+  /* ── Font variable aliases (bound by next/font in layout.tsx) ── */
+  /* --font-sans, --font-serif, --font-mono, --font-retro, --font-product, --font-inria
+     are set by next/font CSS variable injection on <body> */
+}
+
+/* ─── Scheme overrides ─────────────────────────────────────────────── */
+[data-scheme='muted'] {
+  --surface: var(--color-neutral);
+  --ink: var(--color-black);
+  --ink-muted: var(--color-black-60);
+  --ink-subtle: var(--color-black-40);
+  --line: var(--color-black-10);
+  --line-strong: var(--color-black-20);
+  --divider: var(--color-black-40);
+  color: var(--ink);
+}
+
+[data-scheme='dark'] {
+  --surface: var(--color-black);
+  --ink: var(--color-white);
+  --ink-muted: var(--color-white-60);
+  --ink-subtle: var(--color-white-40);
+  --line: var(--color-white-10);
+  --line-strong: var(--color-white-20);
+  --divider: var(--color-white-40);
+  color: var(--ink);
+}
+
+/* ─── Layout primitives ────────────────────────────────────────────── */
+@layer components {
+  .site-container {
+    margin-inline: auto;
+    max-width: 1512px;
+    padding-inline: calc(var(--spacing-base) * 4);
+    width: 100%;
+  }
+
+  .site-container[data-flush-inline] {
+    padding-inline: 0;
+  }
+
+  @media (min-width: 921px) {
+    .site-container {
+      padding-inline: calc(var(--spacing-base) * 10);
+    }
+  }
+
+  /* Reset native button chrome without `all: unset`, which zeroes padding
+     even when px-/py- utilities are on the same element (explore cards). */
+  .native-button-reset {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    text-align: inherit;
+  }
+}
+
+/* ─── Section shell ────────────────────────────────────────────────── */
+/* Rhythm, scheme-collapse, and connect-up rules that cannot be expressed
+   with Tailwind utility classes alone (sibling selectors, :has). */
+
+.section-shell[data-rhythm='section'] {
+  padding-block: calc(var(--spacing-base) * 12);
+
+  @media (min-width: 921px) {
+    padding-block: calc(var(--spacing-base) * 16);
+  }
+}
+
+.section-shell[data-rhythm='flush'] {
+  overflow: visible;
+  padding-block: 0;
+}
+
+.section-shell[data-rhythm='spacious'] {
+  padding-block: calc(var(--spacing-base) * 30);
+}
+
+.section-shell[data-rhythm='hero'] {
+  padding-block: calc(var(--spacing-base) * 7.5);
+
+  @media (min-width: 921px) {
+    padding-block: calc(var(--spacing-base) * 12);
+  }
+}
+
+/* Collapse top rhythm when adjacent sections share the same scheme */
+.section-shell[data-scheme='light']:not([data-rhythm='flush'])
+  + .section-shell[data-scheme='light']:not([data-keep-top-rhythm]),
+.section-shell[data-scheme='muted']:not([data-rhythm='flush'])
+  + .section-shell[data-scheme='muted']:not([data-keep-top-rhythm]),
+.section-shell[data-scheme='dark']:not([data-rhythm='flush'])
+  + .section-shell[data-scheme='dark']:not([data-keep-top-rhythm]) {
+  padding-top: calc(var(--spacing-base) * 1.5);
+}
+
+/* Connect-up: the section BEFORE a connect-up section loses bottom padding */
+.section-shell:has(+ .section-shell[data-connect-up]) {
+  overflow: visible;
+  padding-bottom: 0;
+  z-index: 1;
+}
+
+/* ─── Onboarding slide animations ──────────────────────────────────── */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInBack {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes inference-cursor {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.inference-cursor {
+  animation: inference-cursor 1s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inference-cursor {
+    animation: none;
+  }
+}
+
+/* ─── Lab floating card ───────────────────────────────────────────── */
+.floating-lab-card-grip {
+  display: block;
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  transition: background 180ms ease;
+}
+
+.floating-lab-card-handle:hover .floating-lab-card-grip,
+.floating-lab-card[data-dragging='true'] .floating-lab-card-grip {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.lab-card-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.16) transparent;
+}
+
+.lab-card-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.lab-card-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 6px;
+}
+
+.lab-card-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 999px;
+}
+
+.lab-card-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.26);
+}
+
+/* ─── Button theme (data-attribute scoped) ─────────────────────────── */
+[data-button-root] {
+  --button-fill: transparent;
+  --button-stroke: transparent;
+  --button-hover-fill: transparent;
+  --button-hover-opacity: 1;
+  --button-label: var(--color-black);
+  --button-label-hover: var(--color-black);
+  padding-inline: calc(var(--spacing-base) * 5);
+}
+
+[data-button-root][data-size='small'] {
+  padding-inline: calc(var(--spacing-base) * 4);
+}
+
+[data-button-root][data-variant='filled'] {
+  --button-fill: var(--color-black);
+  --button-hover-fill: var(--color-black-hover);
+  --button-label: var(--color-white);
+  --button-label-hover: var(--color-white);
+}
+
+[data-button-root][data-variant='outlined'] {
+  --button-stroke: var(--color-black);
+  --button-hover-fill: var(--color-black);
+  --button-hover-opacity: 0.05;
+}
+
+[data-scheme='dark'] [data-button-root][data-variant='filled'] {
+  --button-fill: var(--color-white);
+  --button-hover-fill: var(--color-white-hover);
+  --button-label: var(--color-black);
+  --button-label-hover: var(--color-black);
+}
+
+[data-scheme='dark'] [data-button-root][data-variant='outlined'] {
+  --button-stroke: var(--color-white);
+  --button-hover-fill: var(--color-white);
+  --button-label: var(--color-white);
+  --button-label-hover: var(--color-white);
+}
+
+[data-scheme='dark'] [data-scheme='light'] [data-button-root][data-variant='filled'] {
+  --button-fill: var(--color-black);
+  --button-hover-fill: var(--color-black-hover);
+  --button-label: var(--color-white);
+  --button-label-hover: var(--color-white);
+}
+
+[data-scheme='dark'] [data-scheme='light'] [data-button-root][data-variant='outlined'] {
+  --button-stroke: var(--color-black);
+  --button-hover-fill: var(--color-black);
+  --button-label: var(--color-black);
+  --button-label-hover: var(--color-black);
+}
+
+[data-button-root]:is(:hover, :focus-visible) [data-slot='hover-layer'] > span {
+  transform: translateX(0);
+}
+
+[data-button-root]:is(:hover, :focus-visible) [data-slot='content'] {
+  color: var(--button-label-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-button-root] [data-slot='hover-layer'] > span {
+    transition: none;
+  }
+}
+
+/* ─── Global reset ─────────────────────────────────────────────────── */
+/* Must live in @layer base so Tailwind utilities (padding, gap, margin)
+   are not overridden — unlayered reset was zeroing px-* across the site. */
+@layer base {
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--color-white);
+    color: var(--color-black);
+    min-height: 100vh;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+  }
+}

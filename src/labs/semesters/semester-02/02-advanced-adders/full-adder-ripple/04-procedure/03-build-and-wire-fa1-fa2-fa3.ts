@@ -1,0 +1,30 @@
+import { type SceneProcedureStep } from '@/labs/experiments/types';
+
+export const step: SceneProcedureStep = {
+  label: "Build and wire FA1, FA2, FA3",
+  body: "Replicate the Full Adder structure for FA1 (using A1, B1, Cin=C1), FA2 (A2, B2, Cin=C2), and FA3 (A3, B3, Cin=C3). For each stage, connect the Cout of the previous stage to the Cin of the current stage — this is the carry-ripple chain. Each stage produces a Sum LED (S1, S2, S3) and a carry-out (C2, C3, C4 respectively). Connect the red LED for C4 (final carry-out).",
+  show: [
+    "bb",
+    "xor1",
+    "and1",
+    "xor2",
+    "and2",
+    "or1",
+    "xor3",
+    "and3",
+    "xor4",
+    "and4",
+    "or2",
+    "xor5",
+    "and5",
+    "xor6",
+    "and6",
+    "or3",
+    "xor7",
+    "and7",
+    "xor8",
+    "and8",
+    "or4",
+  ],
+  highlight: "xor7",
+};

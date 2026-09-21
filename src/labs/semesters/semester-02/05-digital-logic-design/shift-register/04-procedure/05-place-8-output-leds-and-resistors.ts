@@ -1,0 +1,35 @@
+import { type SceneProcedureStep } from '@/labs/experiments/types';
+
+export const step: SceneProcedureStep = {
+  label: "Place 8 output LEDs and resistors.",
+  body: "Insert 330 Ω resistors at cols 14, 14, 17, 17, 20, 20, 23, 23 (alternating rows c and h). Insert LEDs for Q0–Q7 at cols 16, 16, 19, 19, 22, 22, 25, 25 (alternating rows c and h). Always keep the resistor in series before the LED anode.",
+  show: [
+    "bb",
+    "reg8",
+    "w_mr_high",
+    "w_clk_reg8",
+    "w_d0_reg8",
+    "w_d1_reg8",
+    "r_q0",
+    "r_q1",
+    "r_q2",
+    "r_q3",
+    "r_q4",
+    "r_q5",
+    "r_q6",
+    "r_q7",
+    "led_q0",
+    "led_q1",
+    "led_q2",
+    "led_q3",
+    "led_q4",
+    "led_q5",
+    "led_q6",
+    "led_q7",
+  ],
+  activeInputs: {
+    CLK: 0,
+    D0: 0,
+    D1: 0,
+  },
+};

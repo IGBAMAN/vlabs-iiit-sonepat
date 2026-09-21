@@ -1,0 +1,30 @@
+import { type SceneProcedureStep } from '@/labs/experiments/types';
+
+export const step: SceneProcedureStep = {
+  label: "Display digits 0–9 and verify segments",
+  body: "Set the input switches to each BCD code from 0000 (digit 0) to 1001 (digit 9). For each setting, verify that the correct digit is illuminated on the 7-segment display. For digit 0: segments a, b, c, d, e, f should be ON, g OFF. For digit 1: only b, c ON. For digit 8: all segments ON. Record which segments are lit for each digit and compare with the standard 7-segment encoding table.",
+  show: [
+    "bb",
+    "led_a",
+    "led_b",
+    "led_c",
+    "led_d",
+    "led_e",
+    "led_f",
+    "led_g",
+    "r_a",
+    "r_b",
+    "r_c",
+    "r_d",
+    "r_e",
+    "r_f",
+    "r_g",
+    "w_vcc_ra",
+    "w_vcc_rb",
+    "w_vcc_rc",
+    "w_vcc_rd",
+    "w_vcc_re",
+    "w_vcc_rf",
+    "w_vcc_rg",
+  ],
+};
