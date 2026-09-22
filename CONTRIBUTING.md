@@ -80,65 +80,20 @@ This is a stale cache issue — deleting `.next` fixes it every time.
 ### The workflow
 
 ```
-1. Open Claude chat (normal chat, no agent needed)
-2. Paste the contents of src/labs/COMPONENTS.md
-3. Say: "Build a half adder with step-by-step assembly"
-4. Claude outputs a Circuit object
-5. Save it as src/labs/circuits/half-adder.ts
-6. <LabScene circuit={HalfAdder} />  — it just works
-```
-
-### What a Circuit object looks like
-
-```ts
-// src/labs/circuits/half-adder.ts
-export const HalfAdder: Circuit = {
-  id: 'half-adder',
-  title: 'Half Adder',
-  description: 'Adds two 1-bit inputs, produces Sum and Carry.',
-
-  components: [
-    { id: 'bb',   type: 'breadboard' },
-    { id: 'xor1', type: 'xor-gate',  mountedAt: { board: 'bb', col: 5,  row: 'e' } },
-    { id: 'and1', type: 'and-gate',  mountedAt: { board: 'bb', col: 10, row: 'e' } },
-    { id: 'w1',   type: 'wire', from: 'bb.tie(1,a)', to: 'xor1.A', color: 'red' },
-    { id: 'w2',   type: 'wire', from: 'bb.tie(1,b)', to: 'and1.A', color: 'red' },
-  ],
-
-  steps: [
-    {
-      title: 'Place the breadboard',
-      body: 'The breadboard is your build surface.',
-      show: ['bb'],
-    },
-    {
-      title: 'Mount the XOR gate',
-      body: 'Straddle the XOR gate across the centre gap at column 5.',
-      show: ['bb', 'xor1'],
-      highlight: 'xor1',
-    },
-    {
-      title: 'Mount the AND gate',
-      body: 'Place the AND gate at column 10.',
-      show: ['bb', 'xor1', 'and1'],
-      highlight: 'and1',
-    },
-    {
-      title: 'Wire input A',
-      body: 'Red wire from column 1 to both gate A inputs.',
-      show: ['bb', 'xor1', 'and1', 'w1', 'w2'],
-      highlight: 'w1',
-    },
-  ],
-}
+1. Open Claude or your preferred LLM.
+2. Paste the contents of `src/labs/COMPONENTS.md` and `SKILLS.md`.
+3. Give it a prompt like: "Build a half wave rectifier experiment in the semester folder format."
+4. The LLM will output a series of files (e.g. `01-aim.ts`, `components.ts`, `04-procedure/01-place.ts`, `index.ts`).
+5. Save them in a new directory like `src/labs/semesters/semester-01/01-analog-electronics/half-wave-rectifier/`.
+6. Register the experiment in `src/labs/semesters/catalog.ts`.
 ```
 
 ### Key rules
 
-- `components[]` — every part in the circuit. Each has a unique `id` and a `type`.
-- `steps[]` — cumulative reveal. Each step's `show[]` lists ALL component ids visible so far (not just new ones).
-- `highlight` — optional, points to one component id to animate/focus on that step.
-- Steps are NOT separate files. Everything lives in one file per circuit.
+- **Do NOT use the legacy single-file `src/labs/circuits/<slug>.ts` workflow.**
+- All new labs must go into the `src/labs/semesters/` tree.
+- A lab is composed of `components.ts` (the circuit BOM), `04-procedure/` (the steps), and text sections (`01-aim.ts`, etc.), wired together in `index.ts`.
+- Check `SKILLS.md` and `COMPONENTS.md` for exact typings, folder structures, and how to wire things up.
 
 ---
 

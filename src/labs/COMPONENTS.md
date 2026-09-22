@@ -185,9 +185,12 @@ Prefer the semester folder format for all new work.
 - Place **after** its series resistor (resistor at col N → LED at col N+2)
 
 ### Instruments (beside breadboard)
+
+**CRITICAL RULE:** Do NOT use standard `type: 'wire'` components to connect these instruments to the board. Always use the built-in `terminals` (for sources) or `probes` (for meters) arrays.
+
 ```ts
 {
-  id: 'psu', type: 'dc-jack',
+  id: 'ac_src', type: 'dc-jack',      // Can act as DC PSU or AC transformer source
   mountedAt: { board: 'bb', col: 1, row: 'a' },
   terminals: [
     { board: 'bb', rail: 'vcc_top', col: 5 },
@@ -195,11 +198,11 @@ Prefer the semester folder format for all new work.
   ],
 }
 {
-  id: 'dmm', type: 'potentiometer',   // renders as bench multimeter
+  id: 'dmm', type: 'potentiometer',   // Renders as a bench multimeter
   mountedAt: { board: 'bb', col: 1, row: 'b' },
   probes: [
-    { board: 'bb', col: 3, row: 'd' },
-    { board: 'bb', col: 3, row: 'c' },
+    { board: 'bb', col: 11, row: 'c' },
+    { board: 'bb', col: 14, row: 'c' },
   ],
 }
 ```
@@ -292,44 +295,52 @@ export const step: SceneProcedureStep = {
 
 ---
 
-## Full working example: Half Adder (legacy Circuit shape)
+## Full working example: Half Adder (Semester format)
 
-Semester labs split this across `components.ts` + `04-procedure/`, but the underlying data is the same:
+Semester labs split this across `components.ts` + `04-procedure/`. Do NOT use the legacy single-file Circuit object format.
 
 ```ts
-import { type Circuit } from '@/labs/types';
+// components.ts
+import { type ComponentInstance } from '@/labs/types';
 
-export const HalfAdder: Circuit = {
+export const components: ComponentInstance[] = [
+  { id: 'bb',        type: 'breadboard' },
+  { id: 'xor1',      type: 'xor-gate',  mountedAt: { board: 'bb', col: 7,  row: 'e' } },
+  { id: 'and1',      type: 'and-gate',  mountedAt: { board: 'bb', col: 16, row: 'e' } },
+  { id: 'r_sum',     type: 'resistor',  ohms: 330, mountedAt: { board: 'bb', col: 22, row: 'c' } },
+  { id: 'r_carry',   type: 'resistor',  ohms: 330, mountedAt: { board: 'bb', col: 26, row: 'c' } },
+  { id: 'led_sum',   type: 'led', color: 'green',  mountedAt: { board: 'bb', col: 24, row: 'c' } },
+  { id: 'led_carry', type: 'led', color: 'yellow', mountedAt: { board: 'bb', col: 28, row: 'c' } },
+  { id: 'w_a_xor',   type: 'wire', color: 'red',    from: { board:'bb', col:3, row:'a' }, to: { ic:'xor1', pin:'A' } },
+  { id: 'w_a_and',   type: 'wire', color: 'red',    from: { board:'bb', col:3, row:'b' }, to: { ic:'and1', pin:'A' } },
+  { id: 'w_b_xor',   type: 'wire', color: 'blue',   from: { board:'bb', col:4, row:'a' }, to: { ic:'xor1', pin:'B' } },
+  { id: 'w_b_and',   type: 'wire', color: 'blue',   from: { board:'bb', col:4, row:'b' }, to: { ic:'and1', pin:'B' } },
+  { id: 'w_xor_r',   type: 'wire', color: 'green',  from: { ic:'xor1', pin:'Y' },          to: { component:'r_sum',   end:'p1' } },
+  { id: 'w_r_led',   type: 'wire', color: 'green',  from: { component:'r_sum',   end:'p2' }, to: { led:'led_sum',   end:'anode' } },
+  { id: 'w_and_r',   type: 'wire', color: 'orange', from: { ic:'and1', pin:'Y' },          to: { component:'r_carry', end:'p1' } },
+  { id: 'w_r_led2',  type: 'wire', color: 'yellow', from: { component:'r_carry', end:'p2' }, to: { led:'led_carry', end:'anode' } },
+  { id: 'w_gnd1',    type: 'wire', color: 'black',  from: { led:'led_sum',   end:'cathode' }, to: { board:'bb', rail:'gnd_top', col:1 } },
+  { id: 'w_gnd2',    type: 'wire', color: 'black',  from: { led:'led_carry', end:'cathode' }, to: { board:'bb', rail:'gnd_top', col:2 } },
+];
+```
+
+```ts
+// index.ts
+import { buildCircuit, buildLabContent } from '@/labs/experiments/build';
+import { type ExperimentDefinition } from '@/labs/experiments/types';
+
+import { aim }          from './01-aim';
+import { components }   from './components';
+import { procedureSteps } from './04-procedure';
+// import other sections...
+
+export const halfAdderExperiment: ExperimentDefinition = {
   id: 'half-adder',
   title: 'Half Adder',
   description: 'Adds two 1-bit inputs A and B. Sum = A XOR B, Carry = A AND B.',
-
-  components: [
-    { id: 'bb',        type: 'breadboard' },
-    { id: 'xor1',      type: 'xor-gate',  mountedAt: { board: 'bb', col: 7,  row: 'e' } },
-    { id: 'and1',      type: 'and-gate',  mountedAt: { board: 'bb', col: 16, row: 'e' } },
-    { id: 'r_sum',     type: 'resistor',  ohms: 330, mountedAt: { board: 'bb', col: 22, row: 'c' } },
-    { id: 'r_carry',   type: 'resistor',  ohms: 330, mountedAt: { board: 'bb', col: 26, row: 'c' } },
-    { id: 'led_sum',   type: 'led', color: 'green',  mountedAt: { board: 'bb', col: 24, row: 'c' } },
-    { id: 'led_carry', type: 'led', color: 'yellow', mountedAt: { board: 'bb', col: 28, row: 'c' } },
-    { id: 'w_a_xor',   type: 'wire', color: 'red',    from: { board:'bb', col:3, row:'a' }, to: { ic:'xor1', pin:'A' } },
-    { id: 'w_a_and',   type: 'wire', color: 'red',    from: { board:'bb', col:3, row:'b' }, to: { ic:'and1', pin:'A' } },
-    { id: 'w_b_xor',   type: 'wire', color: 'blue',   from: { board:'bb', col:4, row:'a' }, to: { ic:'xor1', pin:'B' } },
-    { id: 'w_b_and',   type: 'wire', color: 'blue',   from: { board:'bb', col:4, row:'b' }, to: { ic:'and1', pin:'B' } },
-    { id: 'w_xor_r',   type: 'wire', color: 'green',  from: { ic:'xor1', pin:'Y' },          to: { component:'r_sum',   end:'p1' } },
-    { id: 'w_r_led',   type: 'wire', color: 'green',  from: { component:'r_sum',   end:'p2' }, to: { led:'led_sum',   end:'anode' } },
-    { id: 'w_and_r',   type: 'wire', color: 'orange', from: { ic:'and1', pin:'Y' },          to: { component:'r_carry', end:'p1' } },
-    { id: 'w_r_led2',  type: 'wire', color: 'yellow', from: { component:'r_carry', end:'p2' }, to: { led:'led_carry', end:'anode' } },
-    { id: 'w_gnd1',    type: 'wire', color: 'black',  from: { led:'led_sum',   end:'cathode' }, to: { board:'bb', rail:'gnd_top', col:1 } },
-    { id: 'w_gnd2',    type: 'wire', color: 'black',  from: { led:'led_carry', end:'cathode' }, to: { board:'bb', rail:'gnd_top', col:2 } },
-  ],
-
-  steps: [
-    { title: 'Place the breadboard', body: 'Your build surface.', show: ['bb'] },
-    { title: 'Place XOR gate',       body: 'XOR produces Sum.',   show: ['bb','xor1'], highlight: 'xor1' },
-    // …each step adds ids to show[]
-  ],
-
+  components,
+  sections: [aim /*, theory, apparatus, observations, conclusion */],
+  procedureSteps,
   truthTable: {
     inputs: ['A','B'], outputs: ['Sum','Carry'],
     rows: [
@@ -340,6 +351,9 @@ export const HalfAdder: Circuit = {
     ],
   },
 };
+
+export const HalfAdderCircuit = buildCircuit(halfAdderExperiment);
+export const HalfAdderContent = buildLabContent(halfAdderExperiment);
 ```
 
 ---
