@@ -95,6 +95,21 @@ This is a stale cache issue — deleting `.next` fixes it every time.
 - A lab is composed of `components.ts` (the circuit BOM), `04-procedure/` (the steps), and text sections (`01-aim.ts`, etc.), wired together in `index.ts`.
 - Check `SKILLS.md` and `COMPONENTS.md` for exact typings, folder structures, and how to wire things up.
 
+### Audio Narration
+
+All lab sections (`01-aim.ts`, `02-theory.ts`, etc.) and procedure steps (`04-procedure/...`) support an optional `audioPath` property for voiceovers. 
+
+1. Save `.mp3` files in the `public/` directory, mirroring the experiment's folder structure (e.g., `public/semesters/semester-01/01-analog-electronics/half-wave-rectifier/01-aim.mp3`).
+2. Link them in the struct using the absolute public path:
+   ```ts
+   export const aim: LabSection = {
+     id: 'aim',
+     title: 'Aim',
+     audioPath: '/semesters/semester-01/01-analog-electronics/half-wave-rectifier/01-aim.mp3',
+     // ...
+   };
+   ```
+
 ---
 
 ## How to add a new ECE component (geometry)
