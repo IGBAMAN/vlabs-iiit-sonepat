@@ -4,6 +4,7 @@ export const theory: LabSection = {
   id: 'theory',
   type: 'text',
   title: 'Theory',
+  audioPath: '/semesters/semester-01/01-analog-electronics/half-wave-rectifier/02-theory.mp3',
   paragraphs: [
     'A half-wave rectifier converts an alternating current (AC) input into a pulsating direct current (DC) output by allowing current to flow through the load during only one half-cycle of the input waveform.',
     'The diode D1 is forward biased during the positive half-cycle of the AC input, conducting and dropping roughly $0.7\\,V$ across itself (for a silicon diode). During the negative half-cycle, D1 is reverse biased and blocks conduction, so no current flows through the load $R_L$.',

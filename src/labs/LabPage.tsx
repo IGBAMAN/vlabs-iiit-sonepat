@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 
 import { MathText } from "@/ui/Math";
@@ -522,7 +522,45 @@ export function LabPage({ content }: Props) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentIndex, handleNav]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isAudioUnlockedRef = useRef<boolean>(false);
+  const speak = (path: string) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
 
+    // 2. If path is empty (cleanup phase) or mic is off, just exit
+    if (!path || !isMicOn) return;
+
+    // 3. Create and play the new audio purely in JavaScript memory
+    const audio = new Audio(path);
+    audio.preload = "auto"; // Optimizes loading speed
+
+    audio.play().catch((error) => {
+      console.error("Audio playback failed or was interrupted:", error);
+      if (error.name === "NotAllowedError") {
+        // The browser blocked autoplay (e.g., hard refresh).
+        // Turn the mic state off so the user can manually click it to unlock audio.
+        setIsMicOn(false);
+      }
+    });
+
+    audioRef.current = audio;
+  };
+  useEffect(() => {
+    if (!isMicOn) {
+      speak("");
+      return;
+    }
+    if (activeSection?.audioPath) {
+      speak(activeSection.audioPath);
+    }
+    return () => {
+      // Cleanup: stop any playing audio
+      speak("");
+    };
+  }, [activeSection, isMicOn]);
   const circuit: Circuit =
     ALL_CIRCUITS.find((c) => c.id === content.circuitId) ?? BREADBOARD_ONLY;
 
@@ -556,7 +594,23 @@ export function LabPage({ content }: Props) {
 
     return { sceneStepIndex: 0, activeMarkers: [] as StepMarker[] };
   })();
+  const handleToggleMic = () => {
+    // If turning the mic ON, unlock the audio context via this user gesture
+    if (!isMicOn) {
+      isAudioUnlockedRef.current = true;
 
+      // Play a tiny, silent chunk of audio to instantly "unlock" the audio thread
+      const unlockAudio = new Audio(
+        "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==",
+      );
+      unlockAudio
+        .play()
+        .catch((err) => console.error("Failed to unlock audio thread", err));
+    }
+
+    // Toggle your actual state
+    setIsMicOn(!isMicOn);
+  };
   const handleSectionClick = useCallback((section: LabSection) => {
     setActiveSectionId(section.id);
     if (section.type === "procedure") {
@@ -706,7 +760,7 @@ export function LabPage({ content }: Props) {
           <div className="relative flex items-center p-1.5 gap-2 bg-white/90 backdrop-blur-md border border-[var(--color-black-10)] rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.04)] transition-transform duration-300">
             {/* Mic Button */}
             <button
-              onClick={() => setIsMicOn(!isMicOn)}
+              onClick={() => handleToggleMic()}
               className="appearance-none flex items-center justify-center w-8 h-8 rounded-full border-none outline-none bg-[var(--color-black-5)] cursor-pointer text-[var(--ink-muted)] hover:bg-[var(--color-black-10)] hover:text-[var(--ink)] transition-colors"
               aria-label="Microphone"
             >
