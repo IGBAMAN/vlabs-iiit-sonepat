@@ -176,33 +176,7 @@ function ArrowRightIcon() {
     </svg>
   );
 }
-function MicIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <rect
-        x="6"
-        y="2"
-        width="5"
-        height="8"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1.2"
-      />
-      <path
-        d="M3.5 8v1.5a4.5 4.5 0 009 0V8"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M8 14v2"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+
 function MiconIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
