@@ -153,7 +153,7 @@ export function Footer() {
           <p className="text-[#a8a7a4] font-[family-name:var(--font-sans),sans-serif] text-[13px] m-0">
             © 2026 vlabs — open source ECE labs
           </p>
-          <span
+          {/* <span
             className={[
               'inline-flex items-center gap-[calc(var(--spacing-base)*2)]',
               'border border-[rgba(0,0,0,0.08)] rounded-[calc(var(--radius-base)*5)]',
@@ -163,7 +163,7 @@ export function Footer() {
           >
             <span className="block shrink-0 h-1.5 w-1.5 rounded-full bg-[#3a8a4a]" />
             Open source
-          </span>
+          </span> */}
         </div>
       </div>
     </footer>
