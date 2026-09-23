@@ -11,7 +11,7 @@ export const observations: LabSection = {
     headers: ['Parameter', 'Without filter capacitor', 'With filter capacitor (100 µF)'],
     rows: [
       ['AC input (Vrms, secondary)', '12 V', '12 V'],
-      ['DC output across load (measured)', '~9.5 V (pulsating)', '~10.8 V (smoothed)'],
+      ['DC output across load (measured)', '~9.5 V (pulsating)', '~15.6 V (smoothed)'],
       ['Ripple frequency', '100 Hz', '100 Hz'],
       ['Observed ripple', 'High — visible pulsations each half-cycle', 'Low — near-flat DC, small residual ripple'],
     ],
