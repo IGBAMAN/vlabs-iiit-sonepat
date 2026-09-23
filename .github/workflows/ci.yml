@@ -2,13 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [main, dev]
   pull_request:
-    branches: [main]
 
 jobs:
   test:
-    name: Smoke tests
+    name: Type check, lint and smoke tests
     runs-on: ubuntu-latest
 
     steps:
@@ -20,15 +18,19 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: vlabs/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm ci
-        working-directory: vlabs
+
+      - name: Run type check
+        run: npx tsc --noEmit
+
+      - name: Run lint
+        run: npm run lint
 
       - name: Run smoke tests
         run: npm test
-        working-directory: vlabs
 
   build:
     name: Next.js build
@@ -44,12 +46,10 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: vlabs/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm ci
-        working-directory: vlabs
 
       - name: Build
         run: npm run build
-        working-directory: vlabs

@@ -8,6 +8,7 @@
     "start": "next start --port 3003",
     "test": "vitest run",
     "test:watch": "vitest",
+    "lint": "eslint .",
     "test:coverage": "vitest run --coverage",
     "new-lab": "node scripts/new-lab.mjs"
   },
@@ -28,6 +29,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.184.1",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.2.6",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
     "typescript": "^5",
