@@ -12,7 +12,6 @@ type VisualTestInstrumentation = {
 declare global {
   // Window augmentation requires declaration merging — the codebase-wide
   // types-over-interfaces rule explicitly excepts third-party extension.
-  // eslint-disable-next-line typescript-eslint/consistent-type-definitions
   interface Window {
     __visualRuntimeTest?: {
       getActiveContextCount: () => number;

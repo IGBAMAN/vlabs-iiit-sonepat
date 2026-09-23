@@ -178,9 +178,11 @@ export function CommandPalette() {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      setQuery("");
-      setActiveIdx(0);
-      setFilterMenuOpen(false);
+      setTimeout(() => {
+        setQuery("");
+        setActiveIdx(0);
+        setFilterMenuOpen(false);
+      }, 0);
     }
     return () => {
       document.body.style.overflow = "";

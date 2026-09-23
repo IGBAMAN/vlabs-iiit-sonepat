@@ -14,9 +14,9 @@ export function CardsGrid({ children }: { children: ReactNode }) {
   const cards = Children.toArray(children);
   const cardCount = cards.length;
 
-  const runLayout = useCallback(() => {
+  const runLayout = () => {
     applyCardRevealLayout({ cardRefs, gridRef }, cardCount);
-  }, [cardCount]);
+  };
 
   useScheduledOnScroll(runLayout);
 

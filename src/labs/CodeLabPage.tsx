@@ -20,9 +20,9 @@ function hex4(n: number): string {
 
 function getStarterCode(content: LabContent): string {
   for (const sec of content.sections) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     if ((sec as any).type === 'code-lab') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       return (sec as any).starterCode ?? '';
     }
   }
@@ -276,7 +276,7 @@ export function CodeLabPage({ content }: Props) {
 
     // Load memory init from content
     for (const sec of content.sections) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const s = sec as any;
       if (s.type === 'code-lab' && s.memoryInit) {
         for (const [addrStr, val] of Object.entries(s.memoryInit)) {
@@ -326,7 +326,7 @@ export function CodeLabPage({ content }: Props) {
       cpu.loadProgram(result.bytes, result.origin);
 
       for (const sec of content.sections) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         const s = sec as any;
         if (s.type === 'code-lab' && s.memoryInit) {
           for (const [addrStr, val] of Object.entries(s.memoryInit)) {
@@ -368,7 +368,7 @@ export function CodeLabPage({ content }: Props) {
   // ── Sidebar sections ──────────────────────────────────────────────────────────
 
   const sidebarSections = content.sections.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (s) => (s as any).type !== 'code-lab',
   );
 

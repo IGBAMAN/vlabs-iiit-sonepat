@@ -58,7 +58,9 @@ export function StreamingMathText({
   const reducedMotion = usePrefersReducedMotion();
   const tokens = useMemo(() => tokenizeForStream(text), [text]);
   const onCompleteRef = useRef(onComplete);
-  onCompleteRef.current = onComplete;
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   const [revealed, setRevealed] = useState(0);
   const [done, setDone] = useState(false);
@@ -71,19 +73,25 @@ export function StreamingMathText({
 
   useEffect(() => {
     if (reducedMotion) {
-      setRevealed(tokens.length);
-      setDone(true);
-      if (active) onCompleteRef.current?.();
+      setTimeout(() => {
+        setRevealed(tokens.length);
+        setDone(true);
+        if (active) onCompleteRef.current?.();
+      }, 0);
       return;
     }
 
     if (!active) return;
 
-    setRevealed(0);
-    setDone(false);
+    setTimeout(() => {
+      setRevealed(0);
+      setDone(false);
+    }, 0);
 
     if (tokens.length === 0) {
-      setDone(true);
+      setTimeout(() => {
+        setDone(true);
+      }, 0);
       onCompleteRef.current?.();
       return;
     }
@@ -122,7 +130,7 @@ export function StreamingMathText({
       cancelled = true;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [streamKey, active, reducedMotion, text, tokens.length]);
+  }, [streamKey, active, reducedMotion, text, tokens, tokens.length]);
 
   const visibleText = useMemo(() => tokens.slice(0, revealed).join(''), [tokens, revealed]);
 
@@ -160,7 +168,9 @@ export function StreamingTheoryParagraphs({
   const [activePara, setActivePara] = useState(0);
 
   useEffect(() => {
-    setActivePara(0);
+    setTimeout(() => {
+      setActivePara(0);
+    }, 0);
   }, [streamKey]);
 
   const handleParaComplete = useCallback(() => {
