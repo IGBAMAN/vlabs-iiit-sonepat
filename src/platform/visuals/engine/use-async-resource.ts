@@ -19,14 +19,14 @@ export function useAsyncResource<TResource>(
 
   useEffect(() => {
     if (loader === null) {
-      setResource(null);
+      setTimeout(() => setResource(null), 0);
       return;
     }
 
     let cancelled = false;
     let loadedResource: TResource | null = null;
 
-    setResource(null);
+    setTimeout(() => setResource(null), 0);
 
     void Promise.resolve()
       .then(() => loader())

@@ -229,7 +229,9 @@ export function SimALU({ description }: Props) {
   const resultBits = toBits(result.value);
 
   const triggerFlash = useCallback(() => {
-    setFlash(true);
+    setTimeout(() => {
+      setFlash(true);
+    }, 0);
     if (flashTimer.current) clearTimeout(flashTimer.current);
     flashTimer.current = setTimeout(() => setFlash(false), 500);
   }, []);

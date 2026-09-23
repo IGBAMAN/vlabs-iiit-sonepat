@@ -263,7 +263,7 @@ export class CPU8085 {
     return { instruction: mnemonic, address: addr, changed };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   private executeOpcode(opcode: number, mnemonic: string): void {
     // ── NOP ──────────────────────────────────────────────────────────────────
     if (opcode === 0x00) return;

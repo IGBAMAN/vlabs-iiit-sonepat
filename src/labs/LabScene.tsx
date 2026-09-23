@@ -435,9 +435,9 @@ export function LabSceneCanvas({
     const pivot   = pivotRef.current;
     if (!pivot) return;
 
-    for (const [id, g] of map) {
+    meshMapRef.current.forEach((g, id) => {
       g.visible = visible.has(id);
-    }
+    });
 
     // Rebuild LED meshes with correct isOn state
     // For analog circuits (no gates), activeInputs with any truthy value
@@ -449,7 +449,7 @@ export function LabSceneCanvas({
       if (inst.type !== 'led') continue;
       if (!visible.has(inst.id)) continue;
 
-      const old = map.get(inst.id);
+      const old = meshMapRef.current.get(inst.id);
       if (old) {
         disposeGroup(old);
         pivot.remove(old);
@@ -463,7 +463,7 @@ export function LabSceneCanvas({
       const fresh = buildLed(hole(col, row, cols), hole(col + 1, row, cols), inst.color, isOn, bright);
       fresh.visible = true;
       pivot.add(fresh);
-      map.set(inst.id, fresh);
+      meshMapRef.current.set(inst.id, fresh);
     }
 
     // ── Rebuild instruments with dynamic display values ───────────────
@@ -471,7 +471,7 @@ export function LabSceneCanvas({
       if (inst.type !== 'dc-jack' && inst.type !== 'battery' && inst.type !== 'potentiometer') continue;
       if (!visible.has(inst.id)) continue;
 
-      const old = map.get(inst.id);
+      const old = meshMapRef.current.get(inst.id);
       if (old) { disposeGroup(old); pivot.remove(old); }
 
       const displayVal = step.readings?.[inst.id] ?? '--';
@@ -493,7 +493,7 @@ export function LabSceneCanvas({
       }
       fresh.visible = true;
       pivot.add(fresh);
-      map.set(inst.id, fresh);
+      meshMapRef.current.set(inst.id, fresh);
     }
   }, [circuit, activeStepIndex]);
 

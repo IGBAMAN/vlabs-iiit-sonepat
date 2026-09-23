@@ -111,7 +111,9 @@ export function VisualMount({
   // cleanup releasing the new epoch's slot unrepresentable.
   useEffect(() => {
     if (!wantsScene) {
-      setHasSlot(false);
+      setTimeout(() => {
+        setHasSlot(false);
+      }, 0);
       return;
     }
     const settle = webGlContextBudget.request({
@@ -120,7 +122,9 @@ export function VisualMount({
     });
     return () => {
       settle();
-      setHasSlot(false);
+      setTimeout(() => {
+        setHasSlot(false);
+      }, 0);
     };
   }, [wantsScene, priority, epoch]);
 

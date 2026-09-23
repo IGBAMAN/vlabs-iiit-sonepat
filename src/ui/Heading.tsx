@@ -68,17 +68,20 @@ export function Heading({
 }: HeadingProps) {
   // Keys are the segment's character offset in the heading: data-derived,
   // unique even when the same word appears twice (breaks count one).
-  let offset = 0;
-  const keyedSegments = parseHeadingNotation(children).map((segment) => {
-    const text = segment.kind === 'break' ? '' : segment.text;
-    const keyed = {
-      key: `${segment.kind}-${offset}`,
-      kind: segment.kind,
-      text,
-    };
-    offset += text.length + (segment.kind === 'break' ? 1 : 0);
-    return keyed;
-  });
+  const keyedSegments = parseHeadingNotation(children).reduce(
+    (acc, segment) => {
+      const text = segment.kind === 'break' ? '' : segment.text;
+      const keyed = {
+        key: `${segment.kind}-${acc.offset}`,
+        kind: segment.kind,
+        text,
+      };
+      acc.segments.push(keyed);
+      acc.offset += text.length + (segment.kind === 'break' ? 1 : 0);
+      return acc;
+    },
+    { segments: [] as { key: string; kind: string; text: string }[], offset: 0 },
+  ).segments;
 
   const classes = [
     wrapClasses[wrap],

@@ -98,7 +98,7 @@ export function OnboardingFlow() {
   const [institution, setInstitution] = useState('');
   const [department, setDepartment] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
-  const animKey = useRef(0);
+  const [animKey, setAnimKey] = useState(0);
 
   // Redirect immediately if already completed
   useEffect(() => {
@@ -110,13 +110,13 @@ export function OnboardingFlow() {
   }, [router]);
 
   const goForward = () => {
-    animKey.current += 1;
+    setAnimKey((k) => k + 1);
     setDirection('forward');
     setStep((s) => s + 1);
   };
 
   const goBack = () => {
-    animKey.current += 1;
+    setAnimKey((k) => k + 1);
     setDirection('back');
     setStep((s) => s - 1);
   };
@@ -133,7 +133,7 @@ export function OnboardingFlow() {
     setRole(value);
     if (value !== 'other') {
       setTimeout(() => {
-        animKey.current += 1;
+        setAnimKey((k) => k + 1);
         setDirection('forward');
         setStep(1);
       }, 120);
@@ -202,7 +202,7 @@ export function OnboardingFlow() {
 
         {/* ── Step 0: Role ─────────────────────────────────────────────── */}
         {step === 0 && (
-          <div className={slideAnimClass(direction)} key={`step-0-${animKey.current}`}>
+          <div className={slideAnimClass(direction)} key={`step-0-${animKey}`}>
             <div className="mb-[calc(var(--spacing-base)*6)] [&>*+*]:mt-[calc(var(--spacing-base)*2)]">
               <Heading as="h1" size="sm" weight="light" family="sans">
                 Tell us about yourself
@@ -268,7 +268,7 @@ export function OnboardingFlow() {
 
         {/* ── Step 1: Institution / Background ─────────────────────────── */}
         {step === 1 && (
-          <div className={slideAnimClass(direction)} key={`step-1-${animKey.current}`}>
+          <div className={slideAnimClass(direction)} key={`step-1-${animKey}`}>
             <div className="mb-[calc(var(--spacing-base)*6)] [&>*+*]:mt-[calc(var(--spacing-base)*2)]">
               <Heading as="h2" size="sm" weight="light" family="sans">
                 {step1Title}
@@ -356,7 +356,7 @@ export function OnboardingFlow() {
 
         {/* ── Step 2: Interests ────────────────────────────────────────── */}
         {step === 2 && (
-          <div className={slideAnimClass(direction)} key={`step-2-${animKey.current}`}>
+          <div className={slideAnimClass(direction)} key={`step-2-${animKey}`}>
             <div className="mb-[calc(var(--spacing-base)*6)] [&>*+*]:mt-[calc(var(--spacing-base)*2)]">
               <Heading as="h2" size="sm" weight="light" family="sans">
                 {step2Title}

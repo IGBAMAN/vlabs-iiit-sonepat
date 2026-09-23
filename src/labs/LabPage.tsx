@@ -457,9 +457,7 @@ function SceneRenderer({
 // ── Main component ─────────────────────────────────────────────────────────
 type Props = { content: LabContent };
 
-export function LabPage({ content }: Props) {
-  if (content.labType === "code") return <CodeLabPage content={content} />;
-  if (content.labType === "simulation") return <SimLabPage content={content} />;
+function LabPageStandard({ content }: Props) {
   const [isMicOn, setIsMicOn] = useState<boolean>(true);
   const [collapsed, setCollapsed] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState(
@@ -524,7 +522,7 @@ export function LabPage({ content }: Props) {
   }, [currentIndex, handleNav]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isAudioUnlockedRef = useRef<boolean>(false);
-  const speak = (path: string) => {
+  const speak = useCallback((path: string) => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
@@ -547,7 +545,7 @@ export function LabPage({ content }: Props) {
     });
 
     audioRef.current = audio;
-  };
+  }, [isMicOn]);
   useEffect(() => {
     if (!isMicOn) {
       speak("");
@@ -560,7 +558,7 @@ export function LabPage({ content }: Props) {
       // Cleanup: stop any playing audio
       speak("");
     };
-  }, [activeSection, isMicOn]);
+  }, [activeSection, isMicOn, speak]);
   const circuit: Circuit =
     ALL_CIRCUITS.find((c) => c.id === content.circuitId) ?? BREADBOARD_ONLY;
 
@@ -840,4 +838,10 @@ export function LabPage({ content }: Props) {
       </div>
     </div>
   );
+}
+
+export function LabPage({ content }: Props) {
+  if (content.labType === "code") return <CodeLabPage content={content} />;
+  if (content.labType === "simulation") return <SimLabPage content={content} />;
+  return <LabPageStandard content={content} />;
 }

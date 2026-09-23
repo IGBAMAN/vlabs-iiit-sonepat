@@ -11,7 +11,7 @@ import { Button, Container, IconButton } from '@/ui';
 
 import { MenuDrawer } from './components/MenuDrawer';
 import { MenuNav } from './components/MenuNav';
-import { MenuSearch } from './components/MenuSearch';
+import { CommandPalette } from './components/MenuSearch';
 import { MenuSocial } from './components/MenuSocial';
 import { MENU } from './data/menu';
 import { CloseDrawerOnDesktopEffect } from './effect-components/CloseDrawerOnDesktopEffect';
@@ -68,7 +68,7 @@ export function Menu({ scheme = 'light' }: MenuProps) {
             </Drawer.Close>
             <MenuNav items={MENU.navItems} />
             <div className="hidden md:block">
-              <MenuSearch />
+              <CommandPalette />
             </div>
             <MenuSocial links={MENU.socialLinks} />
             <div className="hidden items-center gap-4 md:flex">
