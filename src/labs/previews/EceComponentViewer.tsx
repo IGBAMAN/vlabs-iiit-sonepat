@@ -154,7 +154,7 @@ export function EceComponentViewer({
       const step = Math.min(MAX_ZOOM_STEP, ZOOM_PER_DELTA * Math.abs(e.deltaY));
       applyZoom(zoom * (e.deltaY > 0 ? 1 - step : 1 + step));
     };
-    const onDblClick = () => { applyZoom(1); };
+    const onDblClick = () => { applyZoom(1); ry = 0; rx = TILT[kind] ?? 0.3; };
     canvas.addEventListener('wheel', onWheel, { passive: false });
     canvas.addEventListener('dblclick', onDblClick);
 
