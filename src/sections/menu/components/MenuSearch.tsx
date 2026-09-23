@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { color } from "@/tokens";
 import { SEARCH_INDEX } from "@/sections/explore/search-index.data"; // ← swap for your real SEARCH_INDEX export
 import { type SearchIndexEntry } from "@/sections/explore/search-index.types";
+import { CircuitPreview } from "@/sections/explore/CircuitPreview";
 
 // ─── Icons ─────────────────────────────────────────────────────────────────
 function SearchIcon({ className }: { className?: string }) {
@@ -487,17 +488,10 @@ export function CommandPalette() {
                           onClick={() => navigate(g.header)}
                           type="button"
                         >
-                          <div className="h-[76px] w-full overflow-hidden rounded-[8px] bg-[#f9fafb]">
-                            {g.header.previewImage ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                alt=""
-                                className="h-full w-full object-cover"
-                                src={g.header.previewImage}
-                              />
-                            ) : (
-                              <CircuitIcon />
-                            )}
+                          <div className="relative h-[76px] w-full overflow-hidden rounded-[8px] bg-[#f9fafb]">
+                            <div className="pointer-events-none absolute inset-0">
+                              <CircuitPreview circuitId={g.circuitId} />
+                            </div>
                           </div>
                           <div className="flex flex-col gap-[2px] px-[2px] pt-[8px]">
                             <span className="font-sans text-[0.75rem] font-medium text-[var(--ink)]">
