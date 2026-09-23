@@ -192,7 +192,7 @@ export function MenuSearch() {
       {/* Results dropdown */}
       {showOverlay && (
         <div
-          className="absolute left-0 top-[calc(100%+8px)] min-w-[320px] overflow-hidden rounded-[calc(var(--radius-base)*3)] border border-[var(--line)] bg-[var(--surface)] z-modal"
+          className="absolute left-0 top-[calc(100%+8px)] min-w-[320px] overflow-hidden rounded-[calc(var(--radius-base)*3)] border border-[var(--line)] bg-[var(--surface)] z-[300]"
           id="search-results"
           role="listbox"
           style={{

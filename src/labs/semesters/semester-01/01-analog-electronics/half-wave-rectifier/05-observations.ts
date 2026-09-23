@@ -1,23 +1,19 @@
-import { type ObservationSection } from '@/labs/lab-content.types';
+import { type LabSection } from '@/labs/lab-content.types';
 
-export const observations: ObservationSection = {
+export const observations: LabSection = {
   id: 'observations',
-  type: 'observation',
   title: 'Observations',
+  type: 'observation',
   paragraphs: [
-    'Input AC supply frequency: 50 Hz. Secondary transformer voltage (RMS): 6 V AC.',
-    'Peak input voltage $V_m = \\sqrt{2} \\times V_{rms} \\approx 8.49\\,\\text{V}$. Diode forward drop $\\approx 0.7\\,\\text{V}$.',
-    'Theoretical average DC output (no filter): $V_{avg} = (V_m - 0.7)/\\pi \\approx 2.48\\,\\text{V}$.',
-    'Ripple factor (no filter): $\\gamma \\approx 1.21$.',
+    'Record the multimeter reading across $R_L$ before and after the filter capacitor $C_1$ is connected, and compare against the theoretical value $V_{dc} = V_m / \\pi$.',
   ],
   table: {
-    headers: ['Parameter', 'Theoretical', 'Measured (No Filter)', 'Measured (With 47 µF Filter)'],
+    headers: ['Parameter', 'Without Filter (C1)', 'With Filter (C1)'],
     rows: [
-      ['Peak Input Voltage $V_m$ (V)',    '8.49', '—', '—'],
-      ['Average DC Output $V_{avg}$ (V)', '2.48', '—', '—'],
-      ['RMS Ripple Voltage $V_r$ (V)',    '3.00', '—', '—'],
-      ['Ripple Factor $\\gamma$',         '1.21', '—', '—'],
-      ['Rectifier Efficiency $\\eta$ (%)', '40.6', '—', '—'],
+      ['Peak input voltage $V_m$', '12 V', '12 V'],
+      ['Measured $V_{dc}$ across $R_L$', '3.6 V', '10.4 V'],
+      ['Theoretical $V_{dc}$', '3.82 V', '\u2248 $V_m - V_\\gamma$'],
+      ['Ripple observed', 'High (half-cycle pulses)', 'Low (smoothed)'],
     ],
   },
 };

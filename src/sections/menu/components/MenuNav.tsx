@@ -71,7 +71,7 @@ export function MenuNav({ items }: MenuNavProps) {
       <NavigationMenu.Portal>
         <NavigationMenu.Positioner
           align="start"
-          className="origin-[var(--transform-origin)] z-modal"
+          className="origin-[var(--transform-origin)] z-[300]"
           sideOffset={16}
         >
           <NavigationMenu.Popup className="bg-[var(--surface)] border border-[var(--line)] rounded-[calc(var(--radius-base)*3)] shadow-popup opacity-100 overflow-hidden transition-[opacity,transform] duration-[0.2s,0.24s] ease-[ease,cubic-bezier(0.22,1,0.36,1)] data-[starting-style]:opacity-0 data-[starting-style]:-translate-y-1 data-[ending-style]:opacity-0 data-[ending-style]:-translate-y-1">

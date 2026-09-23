@@ -51,9 +51,9 @@ These types **render** in the lab UI. Prefer only these in `show[]` unless you a
 | `capacitor` | `capacitance` (µF), `mountedAt` | Spans col → col+1 |
 | `led` | `color`, `mountedAt` | Spans col (anode) → col+1; use for outputs **and diode stand-ins** |
 | `not-gate` … `buffer-gate` | `mountedAt` | DIP-14 at row **`e`**, 7 cols; types: `not-gate`, `and-gate`, `or-gate`, `nand-gate`, `nor-gate`, `xor-gate`, `xnor-gate`, `buffer-gate` |
-| `dc-jack` | `mountedAt`, optional `terminals: [PinRef, PinRef]` | Bench PSU left; `[vcc, gnd]` targets |
+| `dc-jack` | `mountedAt`, optional `terminals: [PinRef, PinRef]` | Bench PSU or AC source; **DO NOT USE WIRES to connect it.** Use `terminals` to connect straight to rails/holes. |
 | `battery` | same as `dc-jack` | Same builder as PSU |
-| `potentiometer` | `mountedAt`, optional `probes: [PinRef, PinRef]` | Renders as **bench multimeter**; not a trimpot |
+| `potentiometer` | `mountedAt`, optional `probes: [PinRef, PinRef]` | Renders as **bench multimeter**; not a trimpot. **DO NOT USE WIRES.** Use `probes` to test two points. |
 
 **Visual stand-ins (current repo pattern):** diodes / Zeners on the breadboard use `type: 'led'` (e.g. yellow for signal diode, red for reverse-biased Zener). Theory schematics can use `{ type: 'zener', … }` inside `TheorySection.schematic` — that is 2D only, not the BOM.
 
@@ -340,7 +340,8 @@ When the user gives only a title or syllabus snippet:
 - [ ] Infer subject folder from topic (analog / digital / 8085 / simulation).
 - [ ] Pick unique kebab-case `id`.
 - [ ] Read closest example folder + `COMPONENTS.md` constraints.
-- [ ] Generate all section files + procedure steps with valid cumulative `show[]`.
+- [ ] Generate all section files + procedure steps with valid cumulative `show[]`. Use the Semester Folder Layout (`01-aim.ts`, `components.ts`, etc), NEVER the legacy single-file layout.
+- [ ] Do NOT use `type: 'wire'` components for instruments (`dc-jack`, `potentiometer`). Use their built-in `terminals`/`probes` arrays.
 - [ ] Wire `index.ts` with `buildCircuit` / `buildLabContent`.
 - [ ] Register in `catalog.ts` with 3–6 search tags.
 - [ ] Run `npm test` and `npm run build`.

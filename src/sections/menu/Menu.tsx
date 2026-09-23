@@ -41,7 +41,7 @@ export function Menu({ scheme = 'light' }: MenuProps) {
       <CloseDrawerOnDesktopEffect onClose={closeDrawer} />
       <ScrollStateEffect onScrollStateChange={handleScrollStateChange} />
       <header
-        className="sticky top-0 w-full z-sticky-header transition-[background-color,box-shadow,color] duration-md ease-gentle data-[elevated]:shadow-header data-[pinned]:transition-[box-shadow] data-[pinned]:duration-[0.2s] data-[pinned]:ease-gentle"
+        className="sticky top-0 w-full z-[200] transition-[background-color,box-shadow,color] duration-md ease-gentle data-[elevated]:shadow-header data-[pinned]:transition-[box-shadow] data-[pinned]:duration-[0.2s] data-[pinned]:ease-gentle"
         data-elevated={
           isElevated && !override.suppressElevation ? '' : undefined
         }

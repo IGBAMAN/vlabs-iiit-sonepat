@@ -17,6 +17,7 @@ export type CodeLabSection = {
   id: string;
   type: 'code-lab';
   title: string;
+  audioPath?: string;
   language: '8085';
   starterCode: string;
   description: string;
@@ -28,6 +29,7 @@ export type SimulationSection = {
   id: string;
   type: 'simulation';
   title: string;
+  audioPath?: string;
   simType: 'alu' | 'memory' | 'cache-direct' | 'cache-assoc' | 'cpu' | 'fsm';
   description?: string;
 };
@@ -37,6 +39,7 @@ export type TheorySection = {
   id: string;
   type: 'text';
   title: string;
+  audioPath?: string;
   /** Each paragraph may contain $$...$$ for display math and $...$ for inline math */
   paragraphs: string[];
   /** Schematic spec rendered in the Three.js TheoryScene (2D symbols, same canvas) */
@@ -48,6 +51,7 @@ export type ApparatusSection = {
   id: string;
   type: 'apparatus';
   title: string;
+  audioPath?: string;
   items: ApparatusItem[];
 };
 
@@ -56,6 +60,7 @@ export type ProcedureSection = {
   id: string;
   type: 'procedure';
   title: string;
+  audioPath?: string;
   steps: ProcedureStep[];
 };
 
@@ -64,6 +69,7 @@ export type ObservationSection = {
   id: string;
   type: 'observation';
   title: string;
+  audioPath?: string;
   paragraphs: string[];
   table?: ObservationTable;
 };
@@ -73,6 +79,7 @@ export type ConclusionSection = {
   id: string;
   type: 'conclusion';
   title: string;
+  audioPath?: string;
   paragraphs: string[];
 };
 
@@ -100,6 +107,8 @@ export type ProcedureStep = {
   /** Full instruction shown in the floating card.
    *  May contain $$...$$ display math and $...$ inline math. */
   body: string;
+  /** Path to the audio file for this step (e.g., '/semester/semester-01/.../04-procedure/01-place.mp3') */
+  audioPath?: string;
   /**
    * Which circuit.steps[] index to show in the 3D scene for this step.
    * Legacy labs only — unified experiments set `show` on each procedure step instead.

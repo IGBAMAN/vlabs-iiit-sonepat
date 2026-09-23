@@ -1,12 +1,12 @@
-import { type TheorySection } from '@/labs/lab-content.types';
+import { type LabSection } from '@/labs/lab-content.types';
 
-export const aim: TheorySection = {
+export const aim: LabSection = {
   id: 'aim',
   type: 'text',
   title: 'Aim',
+  audioPath: '/semesters/semester-01/01-analog-electronics/half-wave-rectifier/01-aim.mp3',
   paragraphs: [
-    'To study the operation of a half-wave rectifier using a single diode, observe the pulsating DC output '
-      + 'on an oscilloscope, measure the average output voltage, and compare with the theoretical value '
-      + '$V_{avg} = (V_m - 0.7) / \\pi$.',
+    'To study the working of a half-wave rectifier circuit using a p-n junction diode, and to observe how a filter capacitor reduces ripple in the rectified output.',
+    'To measure and compare the DC output voltage $V_{dc}$ across the load resistor with and without a filter capacitor.',
   ],
 };
