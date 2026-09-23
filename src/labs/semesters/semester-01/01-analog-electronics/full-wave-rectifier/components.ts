@@ -1,7 +1,8 @@
 import { type ComponentInstance } from '@/labs/types';
 
 // Full-wave BRIDGE rectifier.
-// AC secondary -> 4-diode bridge (diodes stood in as yellow LEDs, per repo convention)
+// Input source (rendered as a generic supply stand-in) -> 4-diode bridge
+// (diodes stood in as yellow LEDs, per repo convention)
 // -> shared positive node -> load resistor (with DMM across it) -> filter capacitor -> gnd_top.
 //
 // Node map:
@@ -13,7 +14,7 @@ import { type ComponentInstance } from '@/labs/types';
 export const components: ComponentInstance[] = [
   { id: 'bb', type: 'breadboard' },
 
-  // AC source (step-down transformer secondary). Do NOT wire this with `type: 'wire'` —
+  // Input source stand-in. Do NOT wire this with `type: 'wire'` —
   // its two terminals are wired straight into the board via `terminals`.
   {
     id: 'ac_src',

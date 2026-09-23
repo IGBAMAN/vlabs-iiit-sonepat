@@ -5,7 +5,7 @@ export const apparatus: LabSection = {
   type: 'apparatus',
   title: 'Apparatus Required',
   items: [
-    { name: 'Step-down transformer', specification: '230 V / 12 V-0-12 V or 12 V secondary', quantity: '1' },
+    { name: 'AC source (simulated)', specification: '12 V RMS secondary equivalent (rendered as a generic supply stand-in)', quantity: '1' },
     { name: 'Diodes', specification: '1N4007 (or similar signal diode)', quantity: '4' },
     { name: 'Breadboard', specification: '830 tie-points', quantity: '1' },
     { name: 'Resistor (load)', specification: '1 kΩ', quantity: '1' },
