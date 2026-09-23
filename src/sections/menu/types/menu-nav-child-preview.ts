@@ -1,9 +1,9 @@
 export type MenuNavChildPreview = {
   image: string;
-  imageAlt: MessageDescriptor;
+  imageAlt: string;
   imagePosition?: string;
   imageScale?: number;
-  title: MessageDescriptor;
-  description: MessageDescriptor;
+  title: string;
+  description: string;
 };
 
