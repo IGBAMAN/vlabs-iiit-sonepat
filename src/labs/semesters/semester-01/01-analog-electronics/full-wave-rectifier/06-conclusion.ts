@@ -1,16 +1,11 @@
-import { type ConclusionSection } from '@/labs/lab-content.types';
+import { type LabSection } from '@/labs/lab-content.types';
 
-export const conclusion: ConclusionSection = {
+export const conclusion: LabSection = {
   id: 'conclusion',
   type: 'conclusion',
   title: 'Conclusion',
   paragraphs: [
-    'The full-wave bridge rectifier successfully converted both half-cycles of 50 Hz AC into pulsating DC at 100 Hz. '
-      + 'Measured average output voltage agreed closely with the theoretical value.',
-
-    'Adding a 47 µF filter capacitor reduced the ripple factor from 0.48 to ~0.08, demonstrating effective smoothing. '
-      + 'The full-wave configuration produced higher average output and lower ripple than the half-wave rectifier.',
-
-    'The bridge configuration — requiring no centre-tapped transformer — is the industry standard for mains-frequency rectification in virtually all electronic equipment.',
+    'The full-wave bridge rectifier successfully converted the AC input into a pulsating DC output by using all four diodes to conduct on both half-cycles, giving a higher average output voltage and twice the ripple frequency compared to a half-wave rectifier.',
+    'Adding the filter capacitor significantly reduced the ripple in the output, producing a much steadier DC voltage suitable for powering DC loads — demonstrating the combined role of rectification and filtering in a basic DC power supply.',
   ],
 };

@@ -71,14 +71,28 @@ const TILT: Partial<Record<EceComponentKind, number>> = {
   'dc-power-supply': 0.10,
 };
 
+// Zoom bounds — a dolly on the preset camera position, so the perspective of the
+// product shot is preserved rather than flattened the way an fov change would.
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 3;
+const ZOOM_PER_DELTA = 0.0025;  // fraction of zoom per unit of deltaY
+const MAX_ZOOM_STEP = 0.12;     // cap per event, so one mouse-wheel notch is one notch
+
 // ── Component ─────────────────────────────────────────────────────────────
 type Props = {
   kind: EceComponentKind;
   background?: string;
   autoRotate?: boolean;
+  /** Enable scroll / pinch zoom. Opt-in: while on, the canvas swallows page scroll. */
+  zoom?: boolean;
 };
 
-export function EceComponentViewer({ kind, background = '#f7f6f3', autoRotate = true }: Props) {
+export function EceComponentViewer({
+  kind,
+  background = '#f7f6f3',
+  autoRotate = true,
+  zoom: zoomEnabled = false,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -94,6 +108,8 @@ export function EceComponentViewer({ kind, background = '#f7f6f3', autoRotate = 
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
     camera.position.set(cx, cy, cz);
     camera.lookAt(0, 0, 0);
+    const restPosition = camera.position.clone();
+    let zoom = 1;
 
     const pivot = new THREE.Group();
     pivot.rotation.x = TILT[kind] ?? 0.3;
@@ -124,6 +140,24 @@ export function EceComponentViewer({ kind, background = '#f7f6f3', autoRotate = 
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointermove', onMove);
 
+    // Scroll / pinch zoom. The canvas sets touch-action:none, which is what stops the
+    // browser from turning a trackpad pinch into a page zoom — so both a two-finger
+    // scroll and a pinch land here as wheel events and have to be handled by hand.
+    const applyZoom = (next: number) => {
+      zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, next));
+      camera.position.copy(restPosition).multiplyScalar(1 / zoom);
+      camera.lookAt(0, 0, 0);
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (!zoomEnabled) return;
+      e.preventDefault();
+      const step = Math.min(MAX_ZOOM_STEP, ZOOM_PER_DELTA * Math.abs(e.deltaY));
+      applyZoom(zoom * (e.deltaY > 0 ? 1 - step : 1 + step));
+    };
+    const onDblClick = () => { applyZoom(1); ry = 0; rx = TILT[kind] ?? 0.3; };
+    canvas.addEventListener('wheel', onWheel, { passive: false });
+    canvas.addEventListener('dblclick', onDblClick);
+
     let raf: number;
     function loop() {
       raf = requestAnimationFrame(loop);
@@ -140,10 +174,12 @@ export function EceComponentViewer({ kind, background = '#f7f6f3', autoRotate = 
       canvas.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointermove', onMove);
+      canvas.removeEventListener('wheel', onWheel);
+      canvas.removeEventListener('dblclick', onDblClick);
       renderer.dispose();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kind, background]);
+  }, [kind, background, zoomEnabled]);
 
   return (
     <canvas

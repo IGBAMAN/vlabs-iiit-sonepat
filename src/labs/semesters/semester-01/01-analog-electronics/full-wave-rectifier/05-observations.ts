@@ -1,21 +1,19 @@
-import { type ObservationSection } from '@/labs/lab-content.types';
+import { type LabSection } from '@/labs/lab-content.types';
 
-export const observations: ObservationSection = {
+export const observations: LabSection = {
   id: 'observations',
   type: 'observation',
   title: 'Observations',
   paragraphs: [
-    'Transformer secondary: 9 V RMS, 50 Hz. $V_m = \\sqrt{2} \\times 9 \\approx 12.73\\,\\text{V}$.',
-    'Theoretical $V_{avg}$ (full-wave, two drops) $= (2 \\times 12.73 - 1.4)/\\pi \\approx 7.65\\,\\text{V}$.',
-    'Full-wave output frequency: 100 Hz (period = 5 ms).',
-    'Ripple factor without filter (full-wave): 0.482.',
+    'Note the AC input voltage and the DC output voltage across the load, both without and with the filter capacitor connected, and observe how the ripple visibly reduces once C1 is added.',
   ],
   table: {
-    headers: ['Configuration', '$V_{avg}$ (V)', 'Ripple Factor $\\gamma$', 'Output Frequency'],
+    headers: ['Parameter', 'Without filter capacitor', 'With filter capacitor (100 µF)'],
     rows: [
-      ['Half-wave, no filter',   '3.8', '1.21', '50 Hz'],
-      ['Full-wave, no filter',   '7.6', '0.48', '100 Hz'],
-      ['Full-wave, 47 µF filter','8.2', '0.08', '100 Hz'],
+      ['AC input (Vrms, secondary)', '12 V', '12 V'],
+      ['DC output across load (measured)', '~9.5 V (pulsating)', '~15.6 V (smoothed)'],
+      ['Ripple frequency', '100 Hz', '100 Hz'],
+      ['Observed ripple', 'High — visible pulsations each half-cycle', 'Low — near-flat DC, small residual ripple'],
     ],
   },
 };
