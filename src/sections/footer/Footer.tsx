@@ -91,9 +91,9 @@ export function Footer() {
             </p>
             <div className="flex flex-col gap-[calc(var(--spacing-base)*3)]">
               <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">Half Adder</a>
-              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">Full Adder</a>
-              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">SR Latch</a>
-              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">Logic Gates</a>
+              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/full-adder">Full Adder</a>
+              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/sr-latch">SR Latch</a>
+              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/logic-gates">Logic Gates</a>
             </div>
           </div>
 
@@ -103,11 +103,11 @@ export function Footer() {
               Components
             </p>
             <div className="flex flex-col gap-[calc(var(--spacing-base)*3)]">
-              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">Breadboard</a>
-              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">Resistors</a>
-              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">Capacitors</a>
-              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">LEDs</a>
-              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/labs/half-adder">ICs &amp; Gates</a>
+              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/components/breadboard">Breadboard</a>
+              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/components/resistors">Resistors</a>
+              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/components/capacitors">Capacitors</a>
+              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/components/leds">LEDs</a>
+              <a className="text-[#6b6a68] font-[family-name:var(--font-sans),sans-serif] text-[15px] no-underline w-fit transition-colors duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-[#111110]" href="/components/ics-gates">ICs &amp; Gates</a>
             </div>
           </div>
 
