@@ -11,5 +11,5 @@ export const step: SceneProcedureStep = {
   ],
   highlight: 'dmm',
   supplyVoltage: 12,
-  readings: { dmm: '~10.8 V DC' },
+  readings: { dmm: '~15.6 V DC' },
 };

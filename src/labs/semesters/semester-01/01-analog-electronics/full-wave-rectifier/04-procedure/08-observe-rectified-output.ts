@@ -10,5 +10,5 @@ export const step: SceneProcedureStep = {
     'c1', 'w_pos_c1', 'w_c1_neg', 'dmm',
   ],
   supplyVoltage: 12,
-  readings: { dmm: '10.6 V DC (ripple ≈ 3%)' },
+  readings: { dmm: '15.6 V DC (ripple ≈ 3%)' },
 };
