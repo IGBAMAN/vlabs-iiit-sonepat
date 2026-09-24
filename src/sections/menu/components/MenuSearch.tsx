@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   useCallback,
+  useDeferredValue,
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -13,6 +14,12 @@ import { useRouter } from "next/navigation";
 import { SEARCH_INDEX } from "@/sections/explore/search-index.output";
 import { type SearchIndexEntry } from "@/sections/explore/search-index.types";
 import { CircuitPreview } from "@/sections/explore/CircuitPreview";
+
+const OPTIMIZED_INDEX = SEARCH_INDEX.map((e) => ({
+  ...e,
+  textLower: e.text.toLowerCase(),
+  tagsLower: e.tags.map((t) => t.toLowerCase()),
+}));
 
 // ─── Icons ─────────────────────────────────────────────────────────────────
 function SearchIcon({ className }: { className?: string }) {
@@ -111,7 +118,13 @@ function groupMatches(matches: SearchIndexEntry[]): ResultGroup[] {
       entries.find((e) => e.section === "Title") ??
       entries.find((e) => e.section === "Description") ??
       entries[0];
-    const snippets = entries.filter((e) => e.section !== "Title").slice(0, 3);
+    const snippets = [];
+    for (const e of entries) {
+      if (e.section !== "Title") {
+        snippets.push(e);
+        if (snippets.length === 3) break;
+      }
+    }
     groups.push({
       circuitId,
       header,
@@ -133,10 +146,10 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-
+  const deferredQuery = useDeferredValue(query);
 
   const semesterOptions = useMemo(
-    () => Array.from(new Set(SEARCH_INDEX.map((e) => e.semesterLabel))),
+    () => Array.from(new Set(OPTIMIZED_INDEX.map((e) => e.semesterLabel))),
     [],
   );
 
@@ -172,20 +185,20 @@ export function CommandPalette() {
   }, [open]);
 
   const matches = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = deferredQuery.trim().toLowerCase();
     if (!q) return [];
-    return SEARCH_INDEX.filter((e) => {
+    return OPTIMIZED_INDEX.filter((e) => {
       if (
         selectedSemesters.length &&
         !selectedSemesters.includes(e.semesterLabel)
       )
         return false;
       return (
-        e.text.toLowerCase().includes(q) ||
-        e.tags.some((t) => t.toLowerCase().includes(q))
+        e.textLower.includes(q) ||
+        e.tagsLower.some((t) => t.includes(q))
       );
     });
-  }, [query, selectedSemesters]);
+  }, [deferredQuery, selectedSemesters]);
 
   const groups = useMemo(() => groupMatches(matches), [matches]);
 
