@@ -9,6 +9,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
+    "format:check": "prettier --check .",
     "test:coverage": "vitest run --coverage",
     "new-lab": "node scripts/new-lab.mjs"
   },
@@ -32,6 +33,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.6",
     "postcss": "^8.5.28",
+    "prettier": "^3.9.9",
     "tailwindcss": "^4.3.3",
     "typescript": "^5",
     "vitest": "^4.1.11"
