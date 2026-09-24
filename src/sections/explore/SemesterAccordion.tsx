@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useId } from 'react';
 
 import { spacing } from '@/tokens';
 import { Container } from '@/ui/Container';
@@ -42,6 +42,7 @@ function SemesterItem({
   onSubjectClick: (subject: ExploreSubject) => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const panelId = useId();
 
   return (
     <div className="flex flex-col">
@@ -54,6 +55,7 @@ function SemesterItem({
           'focus-visible:outline-offset-2 focus-visible:rounded-[4px]',
         ].join(' ')}
         aria-expanded={open}
+        aria-controls={panelId}
         onClick={() => setOpen((prev) => !prev)}
       >
         <span
@@ -78,23 +80,36 @@ function SemesterItem({
         </span>
       </button>
 
-      {open && (
-        <div
-          className={[
-            'grid gap-[calc(var(--spacing-base)*6)] grid-cols-1',
-            'pb-[calc(var(--spacing-base)*2)]',
-            'min-[921px]:grid-cols-3',
-          ].join(' ')}
-        >
-          {semester.subjects.map((subject) => (
+      <div
+        id={panelId}
+        className={[
+          'grid',
+          'transition-[grid-template-rows,opacity,visibility] duration-[400ms]',
+          'ease-[cubic-bezier(0.22,1,0.36,1)]',
+          'motion-reduce:transition-none',
+          open
+            ? 'grid-rows-[1fr] opacity-100 visible'
+            : 'grid-rows-[0fr] opacity-0 invisible',
+        ].join(' ')}
+      >
+        <div className='min-h-0 overflow-hidden'>
+          <div
+            className={[
+              'grid gap-[calc(var(--spacing-base)*6)] grid-cols-1',
+              'pb-[calc(var(--spacing-base)*2)]',
+              'min-[921px]:grid-cols-3',
+            ].join(' ')}
+          >
+            {semester.subjects.map((subject) => (
             <SubjectCard
               key={subject.id}
               subject={subject}
               onClick={onSubjectClick}
             />
           ))}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
