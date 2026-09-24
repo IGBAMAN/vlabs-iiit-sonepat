@@ -69,29 +69,51 @@ function CloseIcon() {
   );
 }
 
+// ─── Regex Builder ────────────────────────────────────────────────────────────
+function buildSearchRegex(query: string): RegExp {
+  const parts = query.trim().split(/[-_.\s]+/);
+  const escapedParts = parts.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return new RegExp(escapedParts.join('[-_.\\s]+'), 'i');
+}
+
 // ─── Text highlighting ───────────────────────────────────────────────────────
 function highlight(text: string, query: string): ReactNode {
   if (!query.trim()) return text;
-  const idx = text.toLowerCase().indexOf(query.trim().toLowerCase());
-  if (idx === -1) return text;
-  const end = idx + query.trim().length;
-  return (
-    <>
-      {text.slice(0, idx)}
-      <mark className="rounded-[3px] bg-[#dcfce7] px-[3px] py-[1px] text-[#15803d]">
-        {text.slice(idx, end)}
-      </mark>
-      {text.slice(end)}
-    </>
-  );
+  try {
+    const regex = buildSearchRegex(query);
+    const match = text.match(regex);
+    if (!match || match.index === undefined) return text;
+
+    const idx = match.index;
+    const end = idx + match[0].length;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <mark className="rounded-[3px] bg-[#dcfce7] px-[3px] py-[1px] text-[#15803d]">
+          {text.slice(idx, end)}
+        </mark>
+        {text.slice(end)}
+      </>
+    );
+  } catch (e) {
+    return text;
+  }
 }
 
 function excerpt(text: string, query: string, radius = 60): string {
-  const idx = text.toLowerCase().indexOf(query.trim().toLowerCase());
-  if (idx === -1) return text.slice(0, radius * 2);
-  const start = Math.max(0, idx - radius);
-  const end = Math.min(text.length, idx + query.length + radius);
-  return `${start > 0 ? "…" : ""}${text.slice(start, end)}${end < text.length ? "…" : ""}`;
+  if (!query.trim()) return text.slice(0, radius * 2);
+  try {
+    const regex = buildSearchRegex(query);
+    const match = text.match(regex);
+    if (!match || match.index === undefined) return text.slice(0, radius * 2);
+
+    const idx = match.index;
+    const start = Math.max(0, idx - radius);
+    const end = Math.min(text.length, idx + match[0].length + radius);
+    return `${start > 0 ? "…" : ""}${text.slice(start, end)}${end < text.length ? "…" : ""}`;
+  } catch (e) {
+    return text.slice(0, radius * 2);
+  }
 }
 
 
@@ -185,19 +207,23 @@ export function CommandPalette() {
   }, [open]);
 
   const matches = useMemo(() => {
-    const q = deferredQuery.trim().toLowerCase();
-    if (!q) return [];
-    return OPTIMIZED_INDEX.filter((e) => {
-      if (
-        selectedSemesters.length &&
-        !selectedSemesters.includes(e.semesterLabel)
-      )
-        return false;
-      return (
-        e.textLower.includes(q) ||
-        e.tagsLower.some((t) => t.includes(q))
-      );
-    });
+    if (!deferredQuery.trim()) return [];
+    try {
+      const regex = buildSearchRegex(deferredQuery);
+      return OPTIMIZED_INDEX.filter((e) => {
+        if (
+          selectedSemesters.length &&
+          !selectedSemesters.includes(e.semesterLabel)
+        )
+          return false;
+        return (
+          regex.test(e.textLower) ||
+          e.tagsLower.some((t) => regex.test(t))
+        );
+      });
+    } catch (e) {
+      return [];
+    }
   }, [deferredQuery, selectedSemesters]);
 
   const groups = useMemo(() => groupMatches(matches), [matches]);
