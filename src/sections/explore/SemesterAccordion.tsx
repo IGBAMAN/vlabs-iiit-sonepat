@@ -34,14 +34,15 @@ function Chevron() {
 // ── Single semester block ─────────────────────────────────────────────────
 function SemesterItem({
   semester,
-  defaultOpen,
+  open,
+  onToggle,
   onSubjectClick,
 }: {
   semester: ExploreSemester;
-  defaultOpen: boolean;
+  open: boolean;
+  onToggle: () => void;
   onSubjectClick: (subject: ExploreSubject) => void;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
   const panelId = useId();
 
   return (
@@ -56,7 +57,7 @@ function SemesterItem({
         ].join(' ')}
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={onToggle}
       >
         <span
           className="text-[var(--ink-muted)] font-[family-name:var(--font-sans),sans-serif] font-normal"
@@ -118,6 +119,7 @@ function SemesterItem({
 type Props = { semesters: readonly ExploreSemester[] };
 
 export function SemesterAccordion({ semesters }: Props) {
+  const [openSemester, setOpenSemester] = useState(semesters[0]?.id);
   const [activeSubject, setActiveSubject] = useState<ExploreSubject | null>(null);
 
   return (
@@ -138,7 +140,12 @@ export function SemesterAccordion({ semesters }: Props) {
               <SemesterItem
                 key={semester.id}
                 semester={semester}
-                defaultOpen={index === 0}
+                open={openSemester === semester.id}
+                onToggle={() => {
+                  setOpenSemester((current) =>
+                    current === semester.id ? null : semester.id
+                  );
+                }}
                 onSubjectClick={setActiveSubject}
               />
             ))}
