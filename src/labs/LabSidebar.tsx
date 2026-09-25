@@ -166,7 +166,7 @@ function ChevronLeftIcon({ className }: { className?: string }) {
 
 function ChevronRightIcon({ className }: { className?: string }) {
   return (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className={className}>
+    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className={className}>
       <path
         d="M5.5 3L9.5 7L5.5 11"
         stroke="currentColor"
@@ -192,18 +192,15 @@ function BackArrowIcon({ className }: { className?: string }) {
   );
 }
 
-// ── Tree branch line component ────────────────────────────────────────────────
+// ── Tree branch line for Expanded accordion ───────────────────────────────────
 
 function TreeBranchLine({ isLast }: { isLast: boolean }) {
   return (
     <div className="w-[18px] shrink-0 self-stretch relative flex items-center">
-      {/* Upper vertical line */}
       <div className="absolute left-[7px] top-0 h-1/2 w-[1.5px] bg-black/[0.15]" />
-      {/* Lower vertical line (only if not the last step) */}
       {!isLast && (
         <div className="absolute left-[7px] top-1/2 bottom-0 w-[1.5px] bg-black/[0.15]" />
       )}
-      {/* Horizontal tick to right */}
       <div
         className="absolute left-[7px] top-1/2 w-[9px] h-[1.5px] bg-black/[0.15]"
         style={{
@@ -273,9 +270,29 @@ export function LabSidebar({
   onToggleCollapse,
 }: LabSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [hoveredProcedureFlyout, setHoveredProcedureFlyout] = useState<string | null>(null);
+  const [collapsedProcedureOpen, setCollapsedProcedureOpen] = useState(false);
   const [manuallyCollapsedIds, setManuallyCollapsedIds] = useState<Record<string, boolean>>({});
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const procedureContainerRef = useRef<HTMLDivElement>(null);
+
+  // Close procedure tree when clicking anywhere outside
+  useEffect(() => {
+    if (!collapsedProcedureOpen) return;
+
+    const handlePointerDownOutside = (e: MouseEvent | TouchEvent) => {
+      if (
+        procedureContainerRef.current &&
+        !procedureContainerRef.current.contains(e.target as Node)
+      ) {
+        setCollapsedProcedureOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDownOutside);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDownOutside);
+    };
+  }, [collapsedProcedureOpen]);
 
   // Keyboard shortcut ⌘S / Ctrl+S to focus search
   useEffect(() => {
@@ -380,9 +397,6 @@ export function LabSidebar({
               const isActive = section.id === activeSectionId;
               const isProcedure = section.type === 'procedure';
 
-              // Expanded logic:
-              // If user is searching: always expand.
-              // If procedure is active or matches expandedProcedureId: expanded by default unless manually collapsed by user.
               const isManuallyCollapsed = manuallyCollapsedIds[section.id] === true;
               const isExpanded =
                 isProcedure &&
@@ -392,14 +406,12 @@ export function LabSidebar({
               const handleItemClick = () => {
                 if (isProcedure) {
                   if (isActive) {
-                    // Clicking while already active toggles accordion
                     setManuallyCollapsedIds((prev) => ({
                       ...prev,
                       [section.id]: !isManuallyCollapsed,
                     }));
                     onToggleExpandProcedure(section.id);
                   } else {
-                    // Navigating to procedure section: always expand
                     setManuallyCollapsedIds((prev) => ({
                       ...prev,
                       [section.id]: false,
@@ -453,7 +465,6 @@ export function LabSidebar({
 
                           return (
                             <div key={i} className="flex items-center min-h-[28px]">
-                              {/* Continuous tree branch */}
                               <TreeBranchLine isLast={isLast} />
 
                               <button
@@ -483,7 +494,7 @@ export function LabSidebar({
         </div>
       )}
 
-      {/* ── COLLAPSED VIEW (DOCK / RAIL MATCHING IMAGE 1) ── */}
+      {/* ── COLLAPSED VIEW (MATCHING IMAGES 1 & 3) ── */}
       {collapsed && (
         <div className="flex flex-col items-center h-full w-[58px] py-3 rounded-[20px] relative overflow-visible">
           {/* Back button to /explore */}
@@ -496,16 +507,23 @@ export function LabSidebar({
             <BackArrowIcon />
           </Link>
 
-          {/* Expand toggle pill */}
-          <button
-            onClick={() => onToggleCollapse(false)}
-            aria-label="Expand sidebar"
-            title="Expand sidebar"
-            className="w-10 h-7 flex items-center justify-center gap-0.5 rounded-[8px] border border-black/[0.08] bg-[#f7f7f8] hover:bg-white text-[var(--ink-muted)] hover:text-[var(--ink)] transition-all cursor-pointer p-0 mb-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
-          >
-            <span className="font-mono text-[10px] font-semibold">{'<>'}</span>
-            <ChevronRightIcon />
-          </button>
+          {/* ── Header with FLOATING EXPAND ICON SNUG ON SIDEBAR EDGE (Images 1 & 3) ── */}
+          <div className="relative mb-3 flex items-center justify-center w-full">
+            {/* Code icon inside the bar */}
+            <div className="w-8 h-8 flex items-center justify-center rounded-[8px] border border-black/[0.08] bg-[#f7f7f8] text-[var(--ink-muted)] font-mono text-[11px] font-semibold select-none">
+              {'<>'}
+            </div>
+
+            {/* Floating Expand button close to the sidebar dock edge */}
+            <button
+              onClick={() => onToggleCollapse(false)}
+              aria-label="Expand sidebar"
+              title="Expand sidebar"
+              className="absolute -right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-[5px] bg-white border border-black/[0.12] shadow-[0_1px_4px_rgba(0,0,0,0.08)] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:border-black/[0.25] transition-all cursor-pointer p-0 z-50"
+            >
+              <ChevronRightIcon className="w-3 h-3" />
+            </button>
+          </div>
 
           {/* Search button */}
           <button
@@ -522,30 +540,35 @@ export function LabSidebar({
 
           <div className="w-6 h-[1px] bg-black/[0.08] mb-2" />
 
-          {/* Section icons with unclipped flyout */}
-          <div className="flex flex-col items-center space-y-2 px-2 overflow-visible">
+          {/* Section icons list */}
+          <div className="flex flex-col items-center space-y-2 px-2 overflow-visible w-full">
             {sections.map((section) => {
               const isActive = section.id === activeSectionId;
               const isProcedure = section.type === 'procedure';
-              const showFlyout = isProcedure && (isActive || hoveredProcedureFlyout === section.id);
+              const isOpen = isProcedure && collapsedProcedureOpen;
+              const stepCount = (section as any).steps?.length || 0;
 
               return (
                 <div
                   key={section.id}
-                  className="relative overflow-visible"
-                  onMouseEnter={() => {
-                    if (isProcedure) setHoveredProcedureFlyout(section.id);
-                  }}
-                  onMouseLeave={() => {
-                    if (isProcedure) setHoveredProcedureFlyout(null);
-                  }}
+                  ref={isProcedure ? procedureContainerRef : undefined}
+                  className="w-full flex flex-col items-center relative overflow-visible"
                 >
+                  {/* Section button with click/unclick toggle for procedure */}
                   <button
-                    onClick={() => onSelectSection(section)}
+                    onClick={() => {
+                      if (isProcedure) {
+                        onSelectSection(section);
+                        setCollapsedProcedureOpen((prev) => !prev);
+                      } else {
+                        setCollapsedProcedureOpen(false);
+                        onSelectSection(section);
+                      }
+                    }}
                     aria-label={section.title}
                     title={section.title}
                     className={`w-9 h-9 flex items-center justify-center rounded-[10px] transition-all cursor-pointer border-none outline-none ${
-                      isActive
+                      isActive || isOpen
                         ? 'bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.06]'
                         : 'bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]'
                     }`}
@@ -553,36 +576,84 @@ export function LabSidebar({
                     {getSectionIcon(section)}
                   </button>
 
-                  {/* ── Floating Flyout for Procedure Steps in Collapsed Mode (Image 1) ── */}
-                  {showFlyout && Array.isArray((section as any).steps) && (
+                  {/* ── EXPANDING TREE CONNECTOR INSIDE SIDEBAR & FLOATING CARD OUTSIDE (Image 1) ── */}
+                  {/* Only rendered when isOpen is true so it completely disappears when closed */}
+                  {isProcedure && stepCount > 0 && isOpen && (
                     <div
-                      className="absolute left-[calc(100%+12px)] top-[-10px] z-[999] bg-white rounded-[16px] border border-black/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_1px_4px_rgba(0,0,0,0.05)] p-3 min-w-[210px] max-w-[270px] pointer-events-auto animate-in fade-in zoom-in-95 duration-150"
-                      onMouseEnter={() => setHoveredProcedureFlyout(section.id)}
-                      onMouseLeave={() => setHoveredProcedureFlyout(null)}
+                      className="w-full overflow-visible relative flex items-start animate-in fade-in duration-150"
+                      style={{
+                        height: `${stepCount * 36}px`,
+                      }}
                     >
-                      {/* Subtle connecting notch */}
-                      <div className="absolute -left-2 top-4 w-2 h-0.5 bg-black/[0.15]" />
+                      {/* Tree connecting dashes and lines INSIDE the sidebar width */}
+                      <svg
+                        width="58"
+                        height={stepCount * 36}
+                        className="shrink-0 overflow-visible pointer-events-none"
+                      >
+                        {/* Vertical line centered at x=29 directly under procedure icon */}
+                        <line
+                          x1="29"
+                          y1="0"
+                          x2="29"
+                          y2={(stepCount - 1) * 36 + 18}
+                          stroke="#c4c4c8"
+                          strokeWidth="1.4"
+                          strokeLinecap="round"
+                        />
 
-                      <div className="flex flex-col space-y-1">
+                        {/* Horizontal branch lines extending from center of sidebar out to the right edge */}
+                        {Array.from({ length: stepCount }).map((_, i) => {
+                          const y = i * 36 + 18;
+                          const isLast = i === stepCount - 1;
+
+                          if (isLast) {
+                            return (
+                              <path
+                                key={i}
+                                d={`M 29 ${y - 6} Q 29 ${y} 35 ${y} L 58 ${y}`}
+                                fill="none"
+                                stroke="#c4c4c8"
+                                strokeWidth="1.4"
+                                strokeLinecap="round"
+                              />
+                            );
+                          }
+
+                          return (
+                            <line
+                              key={i}
+                              x1="29"
+                              y1={y}
+                              x2="58"
+                              y2={y}
+                              stroke="#c4c4c8"
+                              strokeWidth="1.4"
+                              strokeLinecap="round"
+                            />
+                          );
+                        })}
+                      </svg>
+
+                      {/* ── Steps Card OUTSIDE the sidebar (contains NO lines inside) ── */}
+                      <div
+                        className="absolute left-[calc(100%+3px)] top-0 z-[999] bg-white rounded-[14px] border border-black/[0.08] shadow-[0_6px_28px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.04)] p-0.5 min-w-[200px] max-w-[260px] flex flex-col pointer-events-auto"
+                      >
                         {(section as any).steps.map((step: ProcedureStep, i: number) => {
                           const isStepActive = isActive && procedureStepIndex === i;
-                          const isLast = i === (section as any).steps.length - 1;
                           const stepLabel = step.label || `Step ${i + 1}`;
 
                           return (
-                            <div key={i} className="flex items-center min-h-[26px]">
-                              {/* Continuous tree branch */}
-                              <TreeBranchLine isLast={isLast} />
-
+                            <div key={i} className="h-[36px] flex items-center px-1">
                               <button
                                 onClick={() => {
                                   onSelectSection(section);
                                   onSelectProcedureStep(i, section);
                                 }}
                                 title={stepLabel}
-                                className={`flex-1 text-left font-sans text-[11.5px] py-1 px-2 rounded-[6px] truncate transition-all cursor-pointer border-none outline-none ${
+                                className={`w-full text-left font-sans text-[12px] h-[32px] px-2.5 rounded-[8px] truncate transition-colors cursor-pointer border-none outline-none flex items-center ${
                                   isStepActive
-                                    ? 'bg-black/[0.06] text-[var(--ink)] font-semibold'
+                                    ? 'bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.03)]'
                                     : 'bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]'
                                 }`}
                               >
