@@ -26,7 +26,7 @@ declare global {
 // ticks). In production every method is a no-op and nothing attaches to
 // window.
 function createVisualTestInstrumentation(): VisualTestInstrumentation {
-  if (process.env.NODE_ENV === 'production' || typeof window === 'undefined') {
+  if (process.env.NODE_ENV === "production" || typeof window === "undefined") {
     return {
       registerContextBudget: () => {},
       countFrameTick: () => {},

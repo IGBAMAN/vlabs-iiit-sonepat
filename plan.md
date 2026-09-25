@@ -9,6 +9,7 @@
 All missing breadboard experiments built. 46 circuits, 56 content files, 74 static pages.
 
 ### Completed
+
 - Sem 1: CB Amplifier, BJT Bias, MOSFET Characteristics, Op-Amp Circuits (+4)
 - Sem 2: BCD→XS3, Gray↔Binary, 4:1 MUX (74HC153), 1:4 DEMUX (74HC139), 4-bit Adder (74HC283), 4-bit Subtractor (+6)
 - Sem 2 Sequential: SR Latch, D Flip-Flop, JK+T Flip-Flop, MOD-5 Counter (+4)
@@ -20,6 +21,7 @@ All missing breadboard experiments built. 46 circuits, 56 content files, 74 stat
 ## Phase 2 — Text-Only Labs ✅ DONE
 
 ### Completed
+
 - `labType` field added to `LabContent` type
 - `LabPage.tsx`: text-mode rendering (no empty breadboard for content-only labs)
 - 10 text-only content files: K-map, CLA adder, Wallace tree, Booth's, Array multiplier, Registers/counters theory, Gates review, C expressions, C file ops ×2
@@ -43,34 +45,39 @@ src/labs/
 ```
 
 ### LabContent extension needed
+
 ```ts
 // In lab-content.types.ts, add:
 type CodeLabSection = {
-  id: string; type: 'code-lab'; title: string;
-  language: '8085';
-  starterCode: string;        // pre-loaded assembly
+  id: string;
+  type: "code-lab";
+  title: string;
+  language: "8085";
+  starterCode: string; // pre-loaded assembly
   description: string;
-  memoryInit?: Record<string, number>;  // hex addr → byte
+  memoryInit?: Record<string, number>; // hex addr → byte
   expectedOutputs?: string;
 };
 ```
 
 ### 11 content files to create (no circuit files)
-| Slug | Program |
-|------|---------|
-| `8085-add-sub-8bit` | MOV/ADD/SUB/STA/LDA/HLT |
-| `8085-add-sub-carry` | ADC/SBB, 16-bit result |
-| `8085-bcd-addition` | ADD + DAA |
-| `8085-multiply-8bit` | Repeated addition loop |
-| `8085-divide-8bit` | Repeated subtraction |
-| `8085-array-sum` | LXI/MOV/ADD loop |
-| `8085-array-square` | Nested multiply |
-| `8085-min-max` | CMP/JC/JNC |
-| `8085-bubble-sort` | Nested loops + XCHG |
-| `8085-bcd-binary-conv` | RRC/ANI/shift |
-| `8085-sqrt` | Successive odd subtraction |
+
+| Slug                   | Program                    |
+| ---------------------- | -------------------------- |
+| `8085-add-sub-8bit`    | MOV/ADD/SUB/STA/LDA/HLT    |
+| `8085-add-sub-carry`   | ADC/SBB, 16-bit result     |
+| `8085-bcd-addition`    | ADD + DAA                  |
+| `8085-multiply-8bit`   | Repeated addition loop     |
+| `8085-divide-8bit`     | Repeated subtraction       |
+| `8085-array-sum`       | LXI/MOV/ADD loop           |
+| `8085-array-square`    | Nested multiply            |
+| `8085-min-max`         | CMP/JC/JNC                 |
+| `8085-bubble-sort`     | Nested loops + XCHG        |
+| `8085-bcd-binary-conv` | RRC/ANI/shift              |
+| `8085-sqrt`            | Successive odd subtraction |
 
 ### UI Layout
+
 ```
 ┌──────────────┬──────────────────────┬────────────────┐
 │   Sidebar    │   Code Editor        │  Registers     │
@@ -82,6 +89,7 @@ type CodeLabSection = {
 ```
 
 ### Instructions to implement
+
 MOV, MVI, LXI, LDA, STA, LHLD, SHLD, LDAX, STAX, XCHG,
 ADD, ADC, SUB, SBB, INR, DCR, INX, DCX, DAD,
 ANA, ORA, XRA, CMP, ADI, ACI, SUI, SBI, ANI, ORI, XRI, CPI,
@@ -92,6 +100,7 @@ RET, RC, RNC, RZ, RNZ, RP, RM, RPE, RPO,
 PUSH, POP, XTHL, SPHL, PCHL, IN, OUT, EI, DI, HLT, NOP
 
 ### LabPage.tsx change
+
 3 lines: detect `labType === 'code'`, lazy-import `<CodeLabPage>`
 
 ### Effort estimate: 4–5 days
@@ -117,22 +126,26 @@ src/labs/
 ```
 
 ### LabContent extension needed
+
 ```ts
 // In lab-content.types.ts, add:
 type SimulationSection = {
-  id: string; type: 'simulation'; title: string;
-  simType: 'alu' | 'memory' | 'cache-direct' | 'cache-assoc' | 'cpu' | 'fsm';
+  id: string;
+  type: "simulation";
+  title: string;
+  simType: "alu" | "memory" | "cache-direct" | "cache-assoc" | "cpu" | "fsm";
 };
 ```
 
 ### 5 content files to create
-| Slug | simType | Sem 3 "Coming soon" entry already exists |
-|------|---------|----------------------------------------|
-| `alu-simulation` | `alu` | ✅ in explore.data.ts |
-| `memory-design` | `memory` | ✅ |
-| `cache-direct-mapped` | `cache-direct` | ✅ |
-| `cache-associative` | `cache-assoc` | ✅ |
-| `cpu-design` | `cpu` | ✅ |
+
+| Slug                  | simType        | Sem 3 "Coming soon" entry already exists |
+| --------------------- | -------------- | ---------------------------------------- |
+| `alu-simulation`      | `alu`          | ✅ in explore.data.ts                    |
+| `memory-design`       | `memory`       | ✅                                       |
+| `cache-direct-mapped` | `cache-direct` | ✅                                       |
+| `cache-associative`   | `cache-assoc`  | ✅                                       |
+| `cpu-design`          | `cpu`          | ✅                                       |
 
 ### Component details
 
@@ -151,6 +164,7 @@ address breakdown (tag|index|offset), hit=green/miss=red animation, hit-rate cou
 (LOAD, ADD, STORE, JUMP). Step button highlights active data path.
 
 ### LabPage.tsx change
+
 Detect `labType === 'simulation'`, delegate to `<SimLabPage>`
 
 ### Effort estimate: 4–5 days
@@ -159,12 +173,12 @@ Detect `labType === 'simulation'`, delegate to `<SimLabPage>`
 
 ## Summary
 
-| Phase | Status | Experiments | New infrastructure |
-|-------|--------|------------|-------------------|
-| 1 — 3D Breadboard | ✅ Done | +30 | None (data files only) |
-| 2 — Text-only | ✅ Done | +10 | `labType` field, LabPage text-mode |
-| 3 — 8085 Code | ⏳ Todo | +11 | Emulator engine, CodeLabPage |
-| 4 — Simulations | ⏳ Todo | +5 | 5 simulation components, SimLabPage |
+| Phase             | Status  | Experiments | New infrastructure                  |
+| ----------------- | ------- | ----------- | ----------------------------------- |
+| 1 — 3D Breadboard | ✅ Done | +30         | None (data files only)              |
+| 2 — Text-only     | ✅ Done | +10         | `labType` field, LabPage text-mode  |
+| 3 — 8085 Code     | ⏳ Todo | +11         | Emulator engine, CodeLabPage        |
+| 4 — Simulations   | ⏳ Todo | +5          | 5 simulation components, SimLabPage |
 
 **Current totals:** 46 circuits, 56 content files, 74 static pages, 4 semesters on /explore.
 **After Phase 3+4:** ~72 experiments, 4 fully-populated semesters.

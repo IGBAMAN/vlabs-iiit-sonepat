@@ -1,4 +1,4 @@
-import { type ObservationSection } from '@/labs/lab-content.types';
+import { type ObservationSection } from "@/labs/lab-content.types";
 
 export const observations: ObservationSection = {
   id: "observations",
@@ -10,70 +10,16 @@ export const observations: ObservationSection = {
     "Further simplification: the result is XNOR(A,C), requiring just one 2-input XNOR gate.",
   ],
   table: {
-    headers: [
-      "A",
-      "B",
-      "C",
-      "f",
-      "K-map Group",
-    ],
+    headers: ["A", "B", "C", "f", "K-map Group"],
     rows: [
-      [
-        0,
-        0,
-        0,
-        1,
-        "Group 1 (A'C')",
-      ],
-      [
-        0,
-        0,
-        1,
-        0,
-        "-",
-      ],
-      [
-        0,
-        1,
-        0,
-        1,
-        "Group 1 (A'C')",
-      ],
-      [
-        0,
-        1,
-        1,
-        0,
-        "-",
-      ],
-      [
-        1,
-        0,
-        0,
-        0,
-        "-",
-      ],
-      [
-        1,
-        0,
-        1,
-        1,
-        "Group 2 (AC)",
-      ],
-      [
-        1,
-        1,
-        0,
-        0,
-        "-",
-      ],
-      [
-        1,
-        1,
-        1,
-        1,
-        "Group 2 (AC)",
-      ],
+      [0, 0, 0, 1, "Group 1 (A'C')"],
+      [0, 0, 1, 0, "-"],
+      [0, 1, 0, 1, "Group 1 (A'C')"],
+      [0, 1, 1, 0, "-"],
+      [1, 0, 0, 0, "-"],
+      [1, 0, 1, 1, "Group 2 (AC)"],
+      [1, 1, 0, 0, "-"],
+      [1, 1, 1, 1, "Group 2 (AC)"],
     ],
   },
 };

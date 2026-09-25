@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { useEffect, useRef, useState, useCallback } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-import { hole, railHole, COLS, colsForBoardId, PITCH } from './coords';
+import { hole, railHole, COLS, colsForBoardId, PITCH } from "./coords";
 import {
   buildBreadboard,
   buildLongBreadboard,
@@ -15,9 +15,9 @@ import {
   buildWire,
   buildDcPowerSupply,
   buildIcMeter,
-} from '@/components';
-import { resolveIcPin } from '@/components/ic';
-import { simulate } from './simulate';
+} from "@/components";
+import { resolveIcPin } from "@/components/ic";
+import { simulate } from "./simulate";
 import {
   type Circuit,
   type ComponentInstance,
@@ -27,51 +27,56 @@ import {
   type IcPin,
   type PassivePin,
   type LedPin,
-} from './types';
+} from "./types";
 
 // ── PinRef → THREE.Vector3 ────────────────────────────────────────────────
 // Uses the real DIP-14 pin resolver for IcPins.
-function resolvePin(pin: PinRef, all: ComponentInstance[]): THREE.Vector3 | null {
-  if ('col' in pin && 'row' in pin && 'board' in pin) {
+function resolvePin(
+  pin: PinRef,
+  all: ComponentInstance[],
+): THREE.Vector3 | null {
+  if ("col" in pin && "row" in pin && "board" in pin) {
     const tie = pin as TiePin;
     const cols = colsForBoardId(tie.board, all);
     return hole(tie.col, tie.row, cols);
   }
 
-  if ('rail' in pin) {
+  if ("rail" in pin) {
     const rp = pin as RailPin;
     const cols = colsForBoardId(rp.board, all);
     const railMap = {
-      vcc_top: 'top_red', gnd_top: 'top_blue',
-      vcc_bot: 'bot_red', gnd_bot: 'bot_blue',
+      vcc_top: "top_red",
+      gnd_top: "top_blue",
+      vcc_bot: "bot_red",
+      gnd_bot: "bot_blue",
     } as const;
     return railHole(rp.col, railMap[rp.rail], cols);
   }
 
-  if ('ic' in pin) {
-    const ip   = pin as IcPin;
-    const inst = all.find(c => c.id === ip.ic);
-    if (!inst || !('mountedAt' in inst)) return null;
+  if ("ic" in pin) {
+    const ip = pin as IcPin;
+    const inst = all.find((c) => c.id === ip.ic);
+    if (!inst || !("mountedAt" in inst)) return null;
     const cols = colsForBoardId(inst.mountedAt.board, all);
     return resolveIcPin(ip.pin, inst.mountedAt.col, inst.mountedAt.row, cols);
   }
 
-  if ('component' in pin) {
-    const pp   = pin as PassivePin;
-    const inst = all.find(c => c.id === pp.component);
-    if (!inst || !('mountedAt' in inst)) return null;
+  if ("component" in pin) {
+    const pp = pin as PassivePin;
+    const inst = all.find((c) => c.id === pp.component);
+    if (!inst || !("mountedAt" in inst)) return null;
     const { col, row, board } = inst.mountedAt;
     const cols = colsForBoardId(board, all);
-    return pp.end === 'p1' ? hole(col, row, cols) : hole(col + 3, row, cols);
+    return pp.end === "p1" ? hole(col, row, cols) : hole(col + 3, row, cols);
   }
 
-  if ('led' in pin) {
-    const lp   = pin as LedPin;
-    const inst = all.find(c => c.id === lp.led);
-    if (!inst || !('mountedAt' in inst)) return null;
+  if ("led" in pin) {
+    const lp = pin as LedPin;
+    const inst = all.find((c) => c.id === lp.led);
+    if (!inst || !("mountedAt" in inst)) return null;
     const { col, row, board } = inst.mountedAt;
     const cols = colsForBoardId(board, all);
-    return lp.end === 'anode' ? hole(col, row, cols) : hole(col + 1, row, cols);
+    return lp.end === "anode" ? hole(col, row, cols) : hole(col + 1, row, cols);
   }
 
   return null;
@@ -85,78 +90,95 @@ function buildInstance(
   ledOnMap: Map<string, boolean>,
 ): THREE.Group | null {
   switch (inst.type) {
-    case 'breadboard':
+    case "breadboard":
       return buildBreadboard(COLS);
 
-    case 'long-breadboard':
+    case "long-breadboard":
       return buildLongBreadboard();
 
-    case 'xor-gate':
-    case 'and-gate':
-    case 'or-gate':
-    case 'not-gate':
-    case 'nand-gate':
-    case 'nor-gate':
-    case 'xnor-gate':
-    case 'buffer-gate': {
+    case "xor-gate":
+    case "and-gate":
+    case "or-gate":
+    case "not-gate":
+    case "nand-gate":
+    case "nor-gate":
+    case "xnor-gate":
+    case "buffer-gate": {
       const { col, board } = inst.mountedAt;
       const cols = colsForBoardId(board, all);
       const labels: Record<string, string> = {
-        'xor-gate': 'XOR',
-        'and-gate': 'AND',
-        'or-gate': 'OR',
-        'not-gate': 'NOT',
-        'nand-gate': 'NAND',
-        'nor-gate': 'NOR',
-        'xnor-gate': 'XNOR',
-        'buffer-gate': 'BUF',
+        "xor-gate": "XOR",
+        "and-gate": "AND",
+        "or-gate": "OR",
+        "not-gate": "NOT",
+        "nand-gate": "NAND",
+        "nor-gate": "NOR",
+        "xnor-gate": "XNOR",
+        "buffer-gate": "BUF",
       };
       return buildDip14(col, labels[inst.type], cols);
     }
 
-    case 'resistor': {
+    case "resistor": {
       const { col, row, board } = inst.mountedAt;
       const cols = colsForBoardId(board, all);
-      return buildResistor(hole(col, row, cols), hole(col + 3, row, cols), inst.ohms);
+      return buildResistor(
+        hole(col, row, cols),
+        hole(col + 3, row, cols),
+        inst.ohms,
+      );
     }
 
-    case 'capacitor': {
+    case "capacitor": {
       const { col, row, board } = inst.mountedAt;
       const cols = colsForBoardId(board, all);
-      return buildCapacitor(hole(col, row, cols), hole(col + 1, row, cols), inst.capacitance);
+      return buildCapacitor(
+        hole(col, row, cols),
+        hole(col + 1, row, cols),
+        inst.capacitance,
+      );
     }
 
-    case 'led': {
+    case "led": {
       const { col, row, board } = inst.mountedAt;
       const cols = colsForBoardId(board, all);
       const isOn = ledOnMap.get(inst.id) ?? false;
-      return buildLed(hole(col, row, cols), hole(col + 1, row, cols), inst.color, isOn);
+      return buildLed(
+        hole(col, row, cols),
+        hole(col + 1, row, cols),
+        inst.color,
+        isOn,
+      );
     }
 
-    case 'wire': {
+    case "wire": {
       const from = resolvePin(inst.from, all);
-      const to   = resolvePin(inst.to,   all);
+      const to = resolvePin(inst.to, all);
       if (!from || !to) return null;
       return buildWire(from, to, inst.color);
     }
 
     // ── Instruments (placed beside the breadboard) ────────────────────
-    case 'dc-jack':
-    case 'battery': {
+    case "dc-jack":
+    case "battery": {
       const t = (inst as any).terminals as [any, any] | undefined;
-      const targets = t ? {
-        vcc: resolvePin(t[0], all) ?? new THREE.Vector3(),
-        gnd: resolvePin(t[1], all) ?? new THREE.Vector3(),
-      } : undefined;
-      return buildDcPowerSupply('left', '--', targets);
+      const targets = t
+        ? {
+            vcc: resolvePin(t[0], all) ?? new THREE.Vector3(),
+            gnd: resolvePin(t[1], all) ?? new THREE.Vector3(),
+          }
+        : undefined;
+      return buildDcPowerSupply("left", "--", targets);
     }
-    case 'potentiometer': {
+    case "potentiometer": {
       const p = (inst as any).probes as [any, any] | undefined;
-      const targets = p ? {
-        probe1: resolvePin(p[0], all) ?? new THREE.Vector3(),
-        probe2: resolvePin(p[1], all) ?? new THREE.Vector3(),
-      } : undefined;
-      return buildIcMeter('right', '--', targets);
+      const targets = p
+        ? {
+            probe1: resolvePin(p[0], all) ?? new THREE.Vector3(),
+            probe2: resolvePin(p[1], all) ?? new THREE.Vector3(),
+          }
+        : undefined;
+      return buildIcMeter("right", "--", targets);
     }
 
     default:
@@ -171,7 +193,7 @@ function disposeGroup(obj: THREE.Object3D) {
     if (child instanceof THREE.Mesh) {
       child.geometry?.dispose();
       const mat = child.material;
-      if (Array.isArray(mat)) mat.forEach(m => m.dispose());
+      if (Array.isArray(mat)) mat.forEach((m) => m.dispose());
       else mat?.dispose();
     }
     if (child instanceof THREE.LineSegments || child instanceof THREE.Line) {
@@ -188,18 +210,24 @@ export type StepMarker = {
   label?: string;
 };
 
-function buildMarkerGroup(marker: StepMarker): { group: THREE.Group; update: (t: number) => void } {
+function buildMarkerGroup(marker: StepMarker): {
+  group: THREE.Group;
+  update: (t: number) => void;
+} {
   const pos = new THREE.Vector3(...marker.pos);
   const dir = new THREE.Vector3(...marker.dir).normalize();
   const out = dir.clone().negate();
-  const UP  = new THREE.Vector3(0, 1, 0);
+  const UP = new THREE.Vector3(0, 1, 0);
   const ZAX = new THREE.Vector3(0, 0, 1);
 
   const group = new THREE.Group();
 
   // Target ring at insertion point
   const ringGeo = new THREE.RingGeometry(0.038, 0.065, 24);
-  const ring    = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xe6502e, side: THREE.DoubleSide }));
+  const ring = new THREE.Mesh(
+    ringGeo,
+    new THREE.MeshBasicMaterial({ color: 0xe6502e, side: THREE.DoubleSide }),
+  );
   ring.quaternion.setFromUnitVectors(ZAX, out);
   ring.position.copy(pos).addScaledVector(out, 0.006);
   group.add(ring);
@@ -213,13 +241,28 @@ function buildMarkerGroup(marker: StepMarker): { group: THREE.Group; update: (t:
   group.add(cone);
 
   // Approach line
-  const linePts = [pos.clone().addScaledVector(out, 0.22), pos.clone().addScaledVector(out, 0.50)];
+  const linePts = [
+    pos.clone().addScaledVector(out, 0.22),
+    pos.clone().addScaledVector(out, 0.5),
+  ];
   const lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
-  group.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0xe6502e, transparent: true, opacity: 0.5 })));
+  group.add(
+    new THREE.Line(
+      lineGeo,
+      new THREE.LineBasicMaterial({
+        color: 0xe6502e,
+        transparent: true,
+        opacity: 0.5,
+      }),
+    ),
+  );
 
-  const BASE = 0.34, BOB = 0.07;
+  const BASE = 0.34,
+    BOB = 0.07;
   function update(t: number) {
-    cone.position.copy(pos).addScaledVector(out, BASE + Math.sin(t * 2.4) * BOB);
+    cone.position
+      .copy(pos)
+      .addScaledVector(out, BASE + Math.sin(t * 2.4) * BOB);
   }
 
   return { group, update };
@@ -242,13 +285,13 @@ export function LabSceneCanvas({
   showControlsHint = true,
   previewMode = false,
 }: LabSceneProps) {
-  const canvasRef      = useRef<HTMLCanvasElement>(null);
-  const sceneRef       = useRef<THREE.Scene | null>(null);
-  const pivotRef       = useRef<THREE.Group | null>(null);
-  const markerGrpRef   = useRef<THREE.Group | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const pivotRef = useRef<THREE.Group | null>(null);
+  const markerGrpRef = useRef<THREE.Group | null>(null);
   const markerUpdaters = useRef<Array<(t: number) => void>>([]);
-  const clockRef       = useRef(0);
-  const controlsRef    = useRef<OrbitControls | null>(null);
+  const clockRef = useRef(0);
+  const controlsRef = useRef<OrbitControls | null>(null);
 
   // ── Build / rebuild the component meshes when circuit or step changes ──
   const meshMapRef = useRef<Map<string, THREE.Group>>(new Map());
@@ -268,7 +311,7 @@ export function LabSceneCanvas({
     renderer.setClearColor(previewMode ? 0xffffff : 0xf7f6f3, 1);
     renderer.shadowMap.enabled = false;
 
-    const scene  = new THREE.Scene();
+    const scene = new THREE.Scene();
     sceneRef.current = scene;
 
     // ── Camera ────────────────────────────────────────────────────────
@@ -294,20 +337,20 @@ export function LabSceneCanvas({
     } else {
       controls = new OrbitControls(camera, canvas);
       controls.target.set(0, 0.1, 0);
-      controls.enableDamping    = true;
-      controls.dampingFactor    = 0.08;
-      controls.minDistance      = 2;
-      controls.maxDistance       = 20;
-      controls.maxPolarAngle    = Math.PI * 0.48;
-      controls.minPolarAngle    = Math.PI * 0.05;
-      controls.enablePan        = true;
-      controls.panSpeed         = 0.8;
-      controls.rotateSpeed      = 0.6;
-      controls.zoomSpeed        = 1.0;
-      controls.mouseButtons     = {
-        LEFT:   THREE.MOUSE.ROTATE,
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.minDistance = 2;
+      controls.maxDistance = 20;
+      controls.maxPolarAngle = Math.PI * 0.48;
+      controls.minPolarAngle = Math.PI * 0.05;
+      controls.enablePan = true;
+      controls.panSpeed = 0.8;
+      controls.rotateSpeed = 0.6;
+      controls.zoomSpeed = 1.0;
+      controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
         MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT:  THREE.MOUSE.PAN,
+        RIGHT: THREE.MOUSE.PAN,
       };
       controls.touches = {
         ONE: THREE.TOUCH.ROTATE,
@@ -334,7 +377,7 @@ export function LabSceneCanvas({
     scene.add(fillLight);
 
     // Initial simulation with step 0 inputs
-    const step0     = circuit.steps[0];
+    const step0 = circuit.steps[0];
     const simResult = simulate(circuit, step0?.activeInputs ?? {});
 
     // Build all component meshes
@@ -356,7 +399,8 @@ export function LabSceneCanvas({
 
     // Resize
     function resize() {
-      const w = canvas.clientWidth, h = canvas.clientHeight;
+      const w = canvas.clientWidth,
+        h = canvas.clientHeight;
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
@@ -384,9 +428,9 @@ export function LabSceneCanvas({
     };
 
     if (previewMode) {
-      canvas.addEventListener('pointerdown', onDown);
-      window.addEventListener('pointerup', onUp);
-      window.addEventListener('pointermove', onMove);
+      canvas.addEventListener("pointerdown", onDown);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointermove", onMove);
     }
 
     function loop() {
@@ -408,17 +452,17 @@ export function LabSceneCanvas({
       cancelAnimationFrame(raf);
       ro.disconnect();
       if (previewMode) {
-        canvas.removeEventListener('pointerdown', onDown);
-        window.removeEventListener('pointerup', onUp);
-        window.removeEventListener('pointermove', onMove);
+        canvas.removeEventListener("pointerdown", onDown);
+        window.removeEventListener("pointerup", onUp);
+        window.removeEventListener("pointermove", onMove);
       } else {
         controls?.dispose();
       }
-      meshMapRef.current.forEach(g => disposeGroup(g));
+      meshMapRef.current.forEach((g) => disposeGroup(g));
       meshMapRef.current.clear();
       renderer.dispose();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [circuit.id, previewMode]);
 
   // ── Update on step change: visibility + LED states ─────────────────────
@@ -431,8 +475,8 @@ export function LabSceneCanvas({
 
     // Visibility
     const visible = new Set(step.show);
-    const map     = meshMapRef.current;
-    const pivot   = pivotRef.current;
+    const map = meshMapRef.current;
+    const pivot = pivotRef.current;
     if (!pivot) return;
 
     meshMapRef.current.forEach((g, id) => {
@@ -442,11 +486,13 @@ export function LabSceneCanvas({
     // Rebuild LED meshes with correct isOn state
     // For analog circuits (no gates), activeInputs with any truthy value
     // means "power is on" → all visible LEDs glow.
-    const hasActiveInput = Object.values(step.activeInputs ?? {}).some(v => v === 1);
-    const hasSimResults  = simResult.ledOn.size > 0;
+    const hasActiveInput = Object.values(step.activeInputs ?? {}).some(
+      (v) => v === 1,
+    );
+    const hasSimResults = simResult.ledOn.size > 0;
 
     for (const inst of circuit.components) {
-      if (inst.type !== 'led') continue;
+      if (inst.type !== "led") continue;
       if (!visible.has(inst.id)) continue;
 
       const old = meshMapRef.current.get(inst.id);
@@ -458,9 +504,20 @@ export function LabSceneCanvas({
       const { col, row, board } = inst.mountedAt;
       const cols = colsForBoardId(board, circuit.components);
       const brightness = step.ledBrightness?.[inst.id];
-      const isOn = brightness !== undefined ? brightness > 0.05 : (hasSimResults ? (simResult.ledOn.get(inst.id) ?? false) : hasActiveInput);
+      const isOn =
+        brightness !== undefined
+          ? brightness > 0.05
+          : hasSimResults
+            ? (simResult.ledOn.get(inst.id) ?? false)
+            : hasActiveInput;
       const bright = step.ledBrightness?.[inst.id] ?? (isOn ? 1.0 : 0.0);
-      const fresh = buildLed(hole(col, row, cols), hole(col + 1, row, cols), inst.color, isOn, bright);
+      const fresh = buildLed(
+        hole(col, row, cols),
+        hole(col + 1, row, cols),
+        inst.color,
+        isOn,
+        bright,
+      );
       fresh.visible = true;
       pivot.add(fresh);
       meshMapRef.current.set(inst.id, fresh);
@@ -468,28 +525,42 @@ export function LabSceneCanvas({
 
     // ── Rebuild instruments with dynamic display values ───────────────
     for (const inst of circuit.components) {
-      if (inst.type !== 'dc-jack' && inst.type !== 'battery' && inst.type !== 'potentiometer') continue;
+      if (
+        inst.type !== "dc-jack" &&
+        inst.type !== "battery" &&
+        inst.type !== "potentiometer"
+      )
+        continue;
       if (!visible.has(inst.id)) continue;
 
       const old = meshMapRef.current.get(inst.id);
-      if (old) { disposeGroup(old); pivot.remove(old); }
+      if (old) {
+        disposeGroup(old);
+        pivot.remove(old);
+      }
 
-      const displayVal = step.readings?.[inst.id] ?? '--';
+      const displayVal = step.readings?.[inst.id] ?? "--";
       let fresh: THREE.Group;
-      if (inst.type === 'potentiometer') {
+      if (inst.type === "potentiometer") {
         const p = (inst as any).probes as [any, any] | undefined;
-        const targets = p ? {
-          probe1: resolvePin(p[0], circuit.components) ?? new THREE.Vector3(),
-          probe2: resolvePin(p[1], circuit.components) ?? new THREE.Vector3(),
-        } : undefined;
-        fresh = buildIcMeter('right', displayVal, targets);
+        const targets = p
+          ? {
+              probe1:
+                resolvePin(p[0], circuit.components) ?? new THREE.Vector3(),
+              probe2:
+                resolvePin(p[1], circuit.components) ?? new THREE.Vector3(),
+            }
+          : undefined;
+        fresh = buildIcMeter("right", displayVal, targets);
       } else {
         const t = (inst as any).terminals as [any, any] | undefined;
-        const targets = t ? {
-          vcc: resolvePin(t[0], circuit.components) ?? new THREE.Vector3(),
-          gnd: resolvePin(t[1], circuit.components) ?? new THREE.Vector3(),
-        } : undefined;
-        fresh = buildDcPowerSupply('left', displayVal, targets);
+        const targets = t
+          ? {
+              vcc: resolvePin(t[0], circuit.components) ?? new THREE.Vector3(),
+              gnd: resolvePin(t[1], circuit.components) ?? new THREE.Vector3(),
+            }
+          : undefined;
+        fresh = buildDcPowerSupply("left", displayVal, targets);
       }
       fresh.visible = true;
       pivot.add(fresh);
@@ -523,18 +594,33 @@ export function LabSceneCanvas({
   }, []);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <canvas
         ref={canvasRef}
         onDoubleClick={handleDoubleClick}
-        style={{ display: 'block', width: '100%', height: '100%', cursor: 'grab', touchAction: 'none' }}
+        style={{
+          display: "block",
+          width: "100%",
+          height: "100%",
+          cursor: "grab",
+          touchAction: "none",
+        }}
       />
       {showControlsHint && (
-        <div style={{
-          position: 'absolute', bottom: 12, left: 14, fontSize: 10, color: 'rgba(0,0,0,0.3)',
-          pointerEvents: 'none', userSelect: 'none', fontFamily: 'var(--font-sans, sans-serif)',
-        }}>
-          left drag: orbit · right drag: pan · scroll: zoom · double-click: reset
+        <div
+          style={{
+            position: "absolute",
+            bottom: 12,
+            left: 14,
+            fontSize: 10,
+            color: "rgba(0,0,0,0.3)",
+            pointerEvents: "none",
+            userSelect: "none",
+            fontFamily: "var(--font-sans, sans-serif)",
+          }}
+        >
+          left drag: orbit · right drag: pan · scroll: zoom · double-click:
+          reset
         </div>
       )}
     </div>

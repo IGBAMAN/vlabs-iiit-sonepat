@@ -15,14 +15,14 @@ labs/previews/               Marketing React canvases (EceViewer cards)
 app/labs/[slug]/             Single dynamic route for all labs
 ```
 
-| Layer | Path | Role |
-|-------|------|------|
-| **Geometry** | `src/components/{type}/index.ts` | Three.js mesh builders (`buildResistor`, `buildLed`, …) |
-| **Bill of materials** | `…/experiment/components.ts` | Which parts exist, where they sit, how wires connect |
-| **Procedure** | `…/experiment/04-procedure/*.ts` | Step copy + cumulative `show[]` for the 3D scene |
-| **Registration** | `labs/semesters/catalog.ts` | Wires experiments into explore + `/labs/<id>` |
+| Layer                 | Path                             | Role                                                    |
+| --------------------- | -------------------------------- | ------------------------------------------------------- |
+| **Geometry**          | `src/components/{type}/index.ts` | Three.js mesh builders (`buildResistor`, `buildLed`, …) |
+| **Bill of materials** | `…/experiment/components.ts`     | Which parts exist, where they sit, how wires connect    |
+| **Procedure**         | `…/experiment/04-procedure/*.ts` | Step copy + cumulative `show[]` for the 3D scene        |
+| **Registration**      | `labs/semesters/catalog.ts`      | Wires experiments into explore + `/labs/<id>`           |
 
-**Important:** `components.ts` in an experiment folder is *not* the same as `src/components/`. The experiment file lists circuit instances; `src/components/` holds the shared render code.
+**Important:** `components.ts` in an experiment folder is _not_ the same as `src/components/`. The experiment file lists circuit instances; `src/components/` holds the shared render code.
 
 ---
 
@@ -51,32 +51,37 @@ Each numbered section file exports a `LabSection`. Procedure steps export `Scene
 
 ```ts
 // 04-procedure/01-breadboard-and-supply.ts
-import { type SceneProcedureStep } from '@/labs/experiments/types';
+import { type SceneProcedureStep } from "@/labs/experiments/types";
 
 export const step: SceneProcedureStep = {
-  label: 'Place the breadboard and connect the DC power supply.',
-  body: 'Place the 830-point breadboard…',
-  show: ['bb', 'psu'],   // cumulative visible component ids
+  label: "Place the breadboard and connect the DC power supply.",
+  body: "Place the 830-point breadboard…",
+  show: ["bb", "psu"], // cumulative visible component ids
 };
 ```
 
 ```ts
 // 04-procedure/index.ts
-import { type SceneProcedureStep } from '@/labs/experiments/types';
-import { step as s01 } from './01-breadboard-and-supply';
+import { type SceneProcedureStep } from "@/labs/experiments/types";
+import { step as s01 } from "./01-breadboard-and-supply";
 // …
 
-export const procedureSteps: SceneProcedureStep[] = [s01, /* … */];
+export const procedureSteps: SceneProcedureStep[] = [s01 /* … */];
 ```
 
 ### 2. Define the circuit in `components.ts`
 
 ```ts
-import { type ComponentInstance } from '@/labs/types';
+import { type ComponentInstance } from "@/labs/types";
 
 export const components: ComponentInstance[] = [
-  { id: 'bb', type: 'breadboard' },
-  { id: 'r1', type: 'resistor', ohms: 470, mountedAt: { board: 'bb', col: 5, row: 'c' } },
+  { id: "bb", type: "breadboard" },
+  {
+    id: "r1",
+    type: "resistor",
+    ohms: 470,
+    mountedAt: { board: "bb", col: 5, row: "c" },
+  },
   // wires, instruments, …
 ];
 ```
@@ -84,20 +89,20 @@ export const components: ComponentInstance[] = [
 ### 3. Assemble `index.ts`
 
 ```ts
-import { buildCircuit, buildLabContent } from '@/labs/experiments/build';
-import { type ExperimentDefinition } from '@/labs/experiments/types';
+import { buildCircuit, buildLabContent } from "@/labs/experiments/build";
+import { type ExperimentDefinition } from "@/labs/experiments/types";
 
-import { aim } from './01-aim';
-import { components } from './components';
-import { procedureSteps } from './04-procedure';
+import { aim } from "./01-aim";
+import { components } from "./components";
+import { procedureSteps } from "./04-procedure";
 // …other sections
 
 export const myExperiment: ExperimentDefinition = {
-  id: 'my-slug',           // kebab-case, unique
-  title: 'My Experiment',
-  description: '…',
+  id: "my-slug", // kebab-case, unique
+  title: "My Experiment",
+  description: "…",
   components,
-  sections: [aim, /* theory, apparatus, observations, conclusion */],
+  sections: [aim /* theory, apparatus, observations, conclusion */],
   procedureSteps,
 };
 
@@ -143,12 +148,14 @@ Prefer the semester folder format for all new work.
 ## Component types (circuit BOM)
 
 ### Breadboard (always first)
+
 ```ts
 { id: 'bb', type: 'breadboard' }          // 30 columns (cols 1–30)
 { id: 'bb', type: 'long-breadboard' }     // 60 columns (cols 1–60) — same rows/rails
 ```
 
 ### Logic gates (DIP-14, straddle centre gap)
+
 ```ts
 { id: 'xor1', type: 'xor-gate',  mountedAt: { board: 'bb', col: 5,  row: 'e' } }
 { id: 'and1', type: 'and-gate',  mountedAt: { board: 'bb', col: 12, row: 'e' } }
@@ -159,28 +166,35 @@ Prefer the semester folder format for all new work.
 ```
 
 **Placement rules:**
+
 - Each IC occupies **7 consecutive columns** (7 pins per side)
 - Space ICs at least 2 columns apart
 - `row: 'e'` — IC straddles the centre gap (rows e/f)
 - Don't place anything past col 29
 
 ### Resistor
+
 ```ts
 { id: 'r1', type: 'resistor', ohms: 330, mountedAt: { board: 'bb', col: 22, row: 'c' } }
 ```
+
 - Spans **col → col+3** (4 columns wide)
 - Use row `c` for output resistors (keeps them away from IC rows)
 
 ### Capacitor
+
 ```ts
 { id: 'c1', type: 'capacitor', capacitance: 100, mountedAt: { board: 'bb', col: 5, row: 'c' } }
 ```
+
 - Spans **col → col+1**; `capacitance` in µF
 
 ### LED (output indicator)
+
 ```ts
 { id: 'led1', type: 'led', color: 'green',  mountedAt: { board: 'bb', col: 24, row: 'c' } }
 ```
+
 - Spans **col (anode) → col+1 (cathode)**
 - Place **after** its series resistor (resistor at col N → LED at col N+2)
 
@@ -216,38 +230,46 @@ Full type union: `src/labs/types.ts` → `ComponentInstance`.
 Every wire has typed `from` and `to` — never strings.
 
 ### Tie point (breadboard hole)
+
 ```ts
 { board: 'bb', col: 3, row: 'a' }
 ```
+
 Valid rows: `a b c d e f g h i j` · Valid cols: `1–30`
 
 ### IC pin
+
 ```ts
 { ic: 'xor1', pin: 'A' }   // input A  (col+0, row e)
 { ic: 'xor1', pin: 'B' }   // input B  (col+1, row e)
 { ic: 'xor1', pin: 'Y' }   // output Y (col+2, row e)
 ```
+
 Pin names: `A`, `B`, `Y` (single gate) or `1A`, `1B`, `1Y`, … (dual gate)
 
 ### Passive pin (resistor / capacitor)
+
 ```ts
 { component: 'r1', end: 'p1' }   // left lead  (col)
 { component: 'r1', end: 'p2' }   // right lead (col+3)
 ```
 
 ### LED pin
+
 ```ts
 { led: 'led1', end: 'anode' }    // col
 { led: 'led1', end: 'cathode' }  // col+1
 ```
 
 ### Power rail
+
 ```ts
 { board: 'bb', rail: 'gnd_top', col: 1 }
 { board: 'bb', rail: 'vcc_top', col: 1 }
 ```
 
 ### Wire instance
+
 ```ts
 {
   id: 'w_a_xor', type: 'wire', color: 'red',
@@ -257,9 +279,11 @@ Pin names: `A`, `B`, `Y` (single gate) or `1A`, `1B`, `1Y`, … (dual gate)
 ```
 
 ### Wire colors
+
 `red` `blue` `orange` `green` `yellow` `white` `black` `purple`
 
 Convention:
+
 - Input A = red, Input B = blue, Cin = orange
 - Internal signals = white
 - Sum/Diff = green, Carry/Borrow = yellow/orange
@@ -273,18 +297,19 @@ Procedure steps own both instructional copy **and** 3D scene state via `show`.
 
 ```ts
 export const step: SceneProcedureStep = {
-  label: 'Wire inputs',                    // step heading in the lab UI
-  body: 'Red=A, Blue=B…',                   // markdown body
-  show: ['bb', 'xor1', 'w_a_xor'],           // cumulative visible ids
-  highlight: 'xor1',                         // optional camera focus
-  activeInputs: { A: 0, B: 0 },              // optional I/O panel (digital)
-  supplyVoltage: 5.0,                        // optional (analog)
-  readings: { dmm: '2.4 V' },                // optional instrument display
-  ledBrightness: { led1: 0.8 },              // optional LED dimming
+  label: "Wire inputs", // step heading in the lab UI
+  body: "Red=A, Blue=B…", // markdown body
+  show: ["bb", "xor1", "w_a_xor"], // cumulative visible ids
+  highlight: "xor1", // optional camera focus
+  activeInputs: { A: 0, B: 0 }, // optional I/O panel (digital)
+  supplyVoltage: 5.0, // optional (analog)
+  readings: { dmm: "2.4 V" }, // optional instrument display
+  ledBrightness: { led1: 0.8 }, // optional LED dimming
 };
 ```
 
 **Rules:**
+
 - First step: usually `['bb']`
 - Each step **adds** to `show[]` — never removes earlier ids
 - Last step: `show` contains every component id, including all wires
@@ -301,53 +326,142 @@ Semester labs split this across `components.ts` + `04-procedure/`. Do NOT use th
 
 ```ts
 // components.ts
-import { type ComponentInstance } from '@/labs/types';
+import { type ComponentInstance } from "@/labs/types";
 
 export const components: ComponentInstance[] = [
-  { id: 'bb',        type: 'breadboard' },
-  { id: 'xor1',      type: 'xor-gate',  mountedAt: { board: 'bb', col: 7,  row: 'e' } },
-  { id: 'and1',      type: 'and-gate',  mountedAt: { board: 'bb', col: 16, row: 'e' } },
-  { id: 'r_sum',     type: 'resistor',  ohms: 330, mountedAt: { board: 'bb', col: 22, row: 'c' } },
-  { id: 'r_carry',   type: 'resistor',  ohms: 330, mountedAt: { board: 'bb', col: 26, row: 'c' } },
-  { id: 'led_sum',   type: 'led', color: 'green',  mountedAt: { board: 'bb', col: 24, row: 'c' } },
-  { id: 'led_carry', type: 'led', color: 'yellow', mountedAt: { board: 'bb', col: 28, row: 'c' } },
-  { id: 'w_a_xor',   type: 'wire', color: 'red',    from: { board:'bb', col:3, row:'a' }, to: { ic:'xor1', pin:'A' } },
-  { id: 'w_a_and',   type: 'wire', color: 'red',    from: { board:'bb', col:3, row:'b' }, to: { ic:'and1', pin:'A' } },
-  { id: 'w_b_xor',   type: 'wire', color: 'blue',   from: { board:'bb', col:4, row:'a' }, to: { ic:'xor1', pin:'B' } },
-  { id: 'w_b_and',   type: 'wire', color: 'blue',   from: { board:'bb', col:4, row:'b' }, to: { ic:'and1', pin:'B' } },
-  { id: 'w_xor_r',   type: 'wire', color: 'green',  from: { ic:'xor1', pin:'Y' },          to: { component:'r_sum',   end:'p1' } },
-  { id: 'w_r_led',   type: 'wire', color: 'green',  from: { component:'r_sum',   end:'p2' }, to: { led:'led_sum',   end:'anode' } },
-  { id: 'w_and_r',   type: 'wire', color: 'orange', from: { ic:'and1', pin:'Y' },          to: { component:'r_carry', end:'p1' } },
-  { id: 'w_r_led2',  type: 'wire', color: 'yellow', from: { component:'r_carry', end:'p2' }, to: { led:'led_carry', end:'anode' } },
-  { id: 'w_gnd1',    type: 'wire', color: 'black',  from: { led:'led_sum',   end:'cathode' }, to: { board:'bb', rail:'gnd_top', col:1 } },
-  { id: 'w_gnd2',    type: 'wire', color: 'black',  from: { led:'led_carry', end:'cathode' }, to: { board:'bb', rail:'gnd_top', col:2 } },
+  { id: "bb", type: "breadboard" },
+  {
+    id: "xor1",
+    type: "xor-gate",
+    mountedAt: { board: "bb", col: 7, row: "e" },
+  },
+  {
+    id: "and1",
+    type: "and-gate",
+    mountedAt: { board: "bb", col: 16, row: "e" },
+  },
+  {
+    id: "r_sum",
+    type: "resistor",
+    ohms: 330,
+    mountedAt: { board: "bb", col: 22, row: "c" },
+  },
+  {
+    id: "r_carry",
+    type: "resistor",
+    ohms: 330,
+    mountedAt: { board: "bb", col: 26, row: "c" },
+  },
+  {
+    id: "led_sum",
+    type: "led",
+    color: "green",
+    mountedAt: { board: "bb", col: 24, row: "c" },
+  },
+  {
+    id: "led_carry",
+    type: "led",
+    color: "yellow",
+    mountedAt: { board: "bb", col: 28, row: "c" },
+  },
+  {
+    id: "w_a_xor",
+    type: "wire",
+    color: "red",
+    from: { board: "bb", col: 3, row: "a" },
+    to: { ic: "xor1", pin: "A" },
+  },
+  {
+    id: "w_a_and",
+    type: "wire",
+    color: "red",
+    from: { board: "bb", col: 3, row: "b" },
+    to: { ic: "and1", pin: "A" },
+  },
+  {
+    id: "w_b_xor",
+    type: "wire",
+    color: "blue",
+    from: { board: "bb", col: 4, row: "a" },
+    to: { ic: "xor1", pin: "B" },
+  },
+  {
+    id: "w_b_and",
+    type: "wire",
+    color: "blue",
+    from: { board: "bb", col: 4, row: "b" },
+    to: { ic: "and1", pin: "B" },
+  },
+  {
+    id: "w_xor_r",
+    type: "wire",
+    color: "green",
+    from: { ic: "xor1", pin: "Y" },
+    to: { component: "r_sum", end: "p1" },
+  },
+  {
+    id: "w_r_led",
+    type: "wire",
+    color: "green",
+    from: { component: "r_sum", end: "p2" },
+    to: { led: "led_sum", end: "anode" },
+  },
+  {
+    id: "w_and_r",
+    type: "wire",
+    color: "orange",
+    from: { ic: "and1", pin: "Y" },
+    to: { component: "r_carry", end: "p1" },
+  },
+  {
+    id: "w_r_led2",
+    type: "wire",
+    color: "yellow",
+    from: { component: "r_carry", end: "p2" },
+    to: { led: "led_carry", end: "anode" },
+  },
+  {
+    id: "w_gnd1",
+    type: "wire",
+    color: "black",
+    from: { led: "led_sum", end: "cathode" },
+    to: { board: "bb", rail: "gnd_top", col: 1 },
+  },
+  {
+    id: "w_gnd2",
+    type: "wire",
+    color: "black",
+    from: { led: "led_carry", end: "cathode" },
+    to: { board: "bb", rail: "gnd_top", col: 2 },
+  },
 ];
 ```
 
 ```ts
 // index.ts
-import { buildCircuit, buildLabContent } from '@/labs/experiments/build';
-import { type ExperimentDefinition } from '@/labs/experiments/types';
+import { buildCircuit, buildLabContent } from "@/labs/experiments/build";
+import { type ExperimentDefinition } from "@/labs/experiments/types";
 
-import { aim }          from './01-aim';
-import { components }   from './components';
-import { procedureSteps } from './04-procedure';
+import { aim } from "./01-aim";
+import { components } from "./components";
+import { procedureSteps } from "./04-procedure";
 // import other sections...
 
 export const halfAdderExperiment: ExperimentDefinition = {
-  id: 'half-adder',
-  title: 'Half Adder',
-  description: 'Adds two 1-bit inputs A and B. Sum = A XOR B, Carry = A AND B.',
+  id: "half-adder",
+  title: "Half Adder",
+  description: "Adds two 1-bit inputs A and B. Sum = A XOR B, Carry = A AND B.",
   components,
   sections: [aim /*, theory, apparatus, observations, conclusion */],
   procedureSteps,
   truthTable: {
-    inputs: ['A','B'], outputs: ['Sum','Carry'],
+    inputs: ["A", "B"],
+    outputs: ["Sum", "Carry"],
     rows: [
-      { inputs:{A:0,B:0}, outputs:{Sum:0,Carry:0} },
-      { inputs:{A:0,B:1}, outputs:{Sum:1,Carry:0} },
-      { inputs:{A:1,B:0}, outputs:{Sum:1,Carry:0} },
-      { inputs:{A:1,B:1}, outputs:{Sum:0,Carry:1} },
+      { inputs: { A: 0, B: 0 }, outputs: { Sum: 0, Carry: 0 } },
+      { inputs: { A: 0, B: 1 }, outputs: { Sum: 1, Carry: 0 } },
+      { inputs: { A: 1, B: 0 }, outputs: { Sum: 1, Carry: 0 } },
+      { inputs: { A: 1, B: 1 }, outputs: { Sum: 0, Carry: 1 } },
     ],
   },
 };
@@ -371,12 +485,15 @@ Only needed when a part type has no Three.js builder yet.
 ### 2. Write the geometry builder in `src/components/my-part/index.ts`
 
 ```ts
-import * as THREE from 'three';
-import { PITCH, BOARD_H, TOP_Y } from '@/labs/coords';
-import { M } from '@/components/shared/materials';
-import { solidBox, solidCyl } from '@/components/shared/primitives';
+import * as THREE from "three";
+import { PITCH, BOARD_H, TOP_Y } from "@/labs/coords";
+import { M } from "@/components/shared/materials";
+import { solidBox, solidCyl } from "@/components/shared/primitives";
 
-export function buildMyPart(mountPos: THREE.Vector3, someField: number): THREE.Group {
+export function buildMyPart(
+  mountPos: THREE.Vector3,
+  someField: number,
+): THREE.Group {
   const root = new THREE.Group();
   // White/cream fill + M.edge() wireframe. Leads use M.gold().
   return root;
@@ -407,10 +524,14 @@ No changes to the renderer loop beyond this switch.
 If theory sections need annotated 3D positions, use `@/labs/marker-helpers` (no Three.js import — safe for SSR):
 
 ```ts
-import { holePos, resistorP1, TOP_Y } from '@/labs/marker-helpers';
+import { holePos, resistorP1, TOP_Y } from "@/labs/marker-helpers";
 
 export const M = {
-  r1_p1: [resistorP1(5, 'c')[0], TOP_Y + 0.55, resistorP1(5, 'c')[2]] as [number, number, number],
+  r1_p1: [resistorP1(5, "c")[0], TOP_Y + 0.55, resistorP1(5, "c")[2]] as [
+    number,
+    number,
+    number,
+  ],
 };
 ```
 

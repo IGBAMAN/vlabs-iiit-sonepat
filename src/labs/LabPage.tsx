@@ -523,30 +523,33 @@ function LabPageStandard({ content }: Props) {
   }, [currentIndex, handleNav]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isAudioUnlockedRef = useRef<boolean>(false);
-  const speak = useCallback((path: string) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
-
-    // 2. If path is empty (cleanup phase) or mic is off, just exit
-    if (!path || !isMicOn) return;
-
-    // 3. Create and play the new audio purely in JavaScript memory
-    const audio = new Audio(path);
-    audio.preload = "auto"; // Optimizes loading speed
-
-    audio.play().catch((error) => {
-      console.error("Audio playback failed or was interrupted:", error);
-      if (error.name === "NotAllowedError") {
-        // The browser blocked autoplay (e.g., hard refresh).
-        // Turn the mic state off so the user can manually click it to unlock audio.
-        setIsMicOn(false);
+  const speak = useCallback(
+    (path: string) => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
       }
-    });
 
-    audioRef.current = audio;
-  }, [isMicOn]);
+      // 2. If path is empty (cleanup phase) or mic is off, just exit
+      if (!path || !isMicOn) return;
+
+      // 3. Create and play the new audio purely in JavaScript memory
+      const audio = new Audio(path);
+      audio.preload = "auto"; // Optimizes loading speed
+
+      audio.play().catch((error) => {
+        console.error("Audio playback failed or was interrupted:", error);
+        if (error.name === "NotAllowedError") {
+          // The browser blocked autoplay (e.g., hard refresh).
+          // Turn the mic state off so the user can manually click it to unlock audio.
+          setIsMicOn(false);
+        }
+      });
+
+      audioRef.current = audio;
+    },
+    [isMicOn],
+  );
   useEffect(() => {
     if (!isMicOn) {
       speak("");
@@ -610,17 +613,20 @@ function LabPageStandard({ content }: Props) {
     // Toggle your actual state
     setIsMicOn(!isMicOn);
   };
-  const handleSectionClick = useCallback((section: LabSection) => {
-    setActiveSectionId(section.id);
-    if (section.type === "procedure") {
-      setExpandedProcedureId((prev) => {
-        if (activeSectionId === section.id) {
-          return prev === section.id ? null : section.id;
-        }
-        return section.id;
-      });
-    }
-  }, [activeSectionId]);
+  const handleSectionClick = useCallback(
+    (section: LabSection) => {
+      setActiveSectionId(section.id);
+      if (section.type === "procedure") {
+        setExpandedProcedureId((prev) => {
+          if (activeSectionId === section.id) {
+            return prev === section.id ? null : section.id;
+          }
+          return section.id;
+        });
+      }
+    },
+    [activeSectionId],
+  );
 
   return (
     <div className="flex h-dvh overflow-hidden bg-[var(--color-neutral)]">
@@ -645,7 +651,6 @@ function LabPageStandard({ content }: Props) {
 
       {/* ── Scene area (always full screen) ── */}
       <div className="flex-1 min-w-0 overflow-hidden relative">
-
         {/* Scene fills the full area */}
         {activeSection && (
           <SceneRenderer

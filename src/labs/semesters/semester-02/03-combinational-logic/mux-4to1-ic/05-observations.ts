@@ -1,4 +1,4 @@
-import { type ObservationSection } from '@/labs/lab-content.types';
+import { type ObservationSection } from "@/labs/lab-content.types";
 
 export const observations: ObservationSection = {
   id: "observations",
@@ -10,47 +10,12 @@ export const observations: ObservationSection = {
     "LED state (ON = HIGH output) matches the value of the selected data input in all cases.",
   ],
   table: {
-    headers: [
-      "S1",
-      "S0",
-      "Selected Input",
-      "I Value",
-      "Y Output",
-      "LED",
-    ],
+    headers: ["S1", "S0", "Selected Input", "I Value", "Y Output", "LED"],
     rows: [
-      [
-        0,
-        0,
-        "I0",
-        1,
-        1,
-        "ON",
-      ],
-      [
-        0,
-        1,
-        "I1",
-        0,
-        0,
-        "OFF",
-      ],
-      [
-        1,
-        0,
-        "I2",
-        1,
-        1,
-        "ON",
-      ],
-      [
-        1,
-        1,
-        "I3",
-        0,
-        0,
-        "OFF",
-      ],
+      [0, 0, "I0", 1, 1, "ON"],
+      [0, 1, "I1", 0, 0, "OFF"],
+      [1, 0, "I2", 1, 1, "ON"],
+      [1, 1, "I3", 0, 0, "OFF"],
     ],
   },
 };

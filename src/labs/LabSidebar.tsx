@@ -1,25 +1,42 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { type LabSection, type ProcedureStep } from '@/labs/lab-content.types';
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import Link from "next/link";
+import { type LabSection, type ProcedureStep } from "@/labs/lab-content.types";
 
 // ── Bespoke icons matching design requirements ───────────────────────────────
 
 function AimIcon({ className }: { className?: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+    >
       <circle cx="8" cy="8" r="6.25" stroke="currentColor" strokeWidth="1.3" />
       <circle cx="8" cy="8" r="2.75" stroke="currentColor" strokeWidth="1.3" />
       <circle cx="8" cy="8" r="0.75" fill="currentColor" />
-      <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path
+        d="M8 1v2M8 13v2M1 8h2M13 8h2"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 function TheoryIcon({ className }: { className?: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+    >
       <path
         d="M2.5 3.25C2.5 2.56 3.06 2 3.75 2H7v11.5H3.75C3.06 13.5 2.5 12.94 2.5 12.25V3.25z"
         stroke="currentColor"
@@ -30,17 +47,55 @@ function TheoryIcon({ className }: { className?: string }) {
         stroke="currentColor"
         strokeWidth="1.3"
       />
-      <line x1="4.5" y1="5" x2="5.5" y2="5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <line x1="4.5" y1="7.5" x2="5.5" y2="7.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <line x1="10.5" y1="5" x2="11.5" y2="5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <line x1="10.5" y1="7.5" x2="11.5" y2="7.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <line
+        x1="4.5"
+        y1="5"
+        x2="5.5"
+        y2="5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="4.5"
+        y1="7.5"
+        x2="5.5"
+        y2="7.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="10.5"
+        y1="5"
+        x2="11.5"
+        y2="5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="10.5"
+        y1="7.5"
+        x2="11.5"
+        y2="7.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 function ApparatusIcon({ className }: { className?: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+    >
       <rect
         x="1.5"
         y="2.5"
@@ -67,9 +122,24 @@ function ApparatusIcon({ className }: { className?: string }) {
         stroke="currentColor"
         strokeWidth="1.2"
       />
-      <path d="M3.5 6.5H5M3.5 8H5M3.5 9.5H5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M11 6.5H12.5M11 8H12.5M11 9.5H12.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M11 5.5L13.5 3.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+      <path
+        d="M3.5 6.5H5M3.5 8H5M3.5 9.5H5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M11 6.5H12.5M11 8H12.5M11 9.5H12.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M11 5.5L13.5 3.5"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round"
+      />
       <circle cx="13.5" cy="3.2" r="0.8" fill="currentColor" />
     </svg>
   );
@@ -77,11 +147,49 @@ function ApparatusIcon({ className }: { className?: string }) {
 
 function ProcedureIcon({ className }: { className?: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
-      <rect x="2" y="2" width="4.5" height="4.5" rx="1.2" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="9.5" y="2" width="4.5" height="4.5" rx="1.2" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="2" y="9.5" width="4.5" height="4.5" rx="1.2" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="9.5" y="9.5" width="4.5" height="4.5" rx="1.2" stroke="currentColor" strokeWidth="1.3" />
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+    >
+      <rect
+        x="2"
+        y="2"
+        width="4.5"
+        height="4.5"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+      <rect
+        x="9.5"
+        y="2"
+        width="4.5"
+        height="4.5"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+      <rect
+        x="2"
+        y="9.5"
+        width="4.5"
+        height="4.5"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+      <rect
+        x="9.5"
+        y="9.5"
+        width="4.5"
+        height="4.5"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
       <circle cx="4.25" cy="4.25" r="0.8" fill="currentColor" />
       <circle cx="11.75" cy="4.25" r="0.8" fill="currentColor" />
       <circle cx="4.25" cy="11.75" r="0.8" fill="currentColor" />
@@ -92,18 +200,59 @@ function ProcedureIcon({ className }: { className?: string }) {
 
 function ObservationsIcon({ className }: { className?: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
-      <rect x="2" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
-      <line x1="2" y1="6.5" x2="14" y2="6.5" stroke="currentColor" strokeWidth="1.1" />
-      <line x1="6.5" y1="2.5" x2="6.5" y2="13.5" stroke="currentColor" strokeWidth="1.1" />
-      <line x1="10.5" y1="6.5" x2="10.5" y2="13.5" stroke="currentColor" strokeWidth="1.1" />
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+    >
+      <rect
+        x="2"
+        y="2.5"
+        width="12"
+        height="11"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+      <line
+        x1="2"
+        y1="6.5"
+        x2="14"
+        y2="6.5"
+        stroke="currentColor"
+        strokeWidth="1.1"
+      />
+      <line
+        x1="6.5"
+        y1="2.5"
+        x2="6.5"
+        y2="13.5"
+        stroke="currentColor"
+        strokeWidth="1.1"
+      />
+      <line
+        x1="10.5"
+        y1="6.5"
+        x2="10.5"
+        y2="13.5"
+        stroke="currentColor"
+        strokeWidth="1.1"
+      />
     </svg>
   );
 }
 
 function ConclusionIcon({ className }: { className?: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+    >
       <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3" />
       <path
         d="M5 8.2l2.1 2.1L11 6"
@@ -118,27 +267,82 @@ function ConclusionIcon({ className }: { className?: string }) {
 
 function GenericSectionIcon({ className }: { className?: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
-      <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.3" />
-      <line x1="5" y1="5.5" x2="11" y2="5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <line x1="5" y1="8" x2="11" y2="8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <line x1="5" y1="10.5" x2="9" y2="10.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+    >
+      <rect
+        x="2"
+        y="2"
+        width="12"
+        height="12"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+      <line
+        x1="5"
+        y1="5.5"
+        x2="11"
+        y2="5.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="5"
+        y1="8"
+        x2="11"
+        y2="8"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="5"
+        y1="10.5"
+        x2="9"
+        y2="10.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 function SearchIcon({ className }: { className?: string }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className={className}>
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      className={className}
+    >
       <circle cx="6" cy="6" r="4.25" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M9.25 9.25L12.5 12.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path
+        d="M9.25 9.25L12.5 12.5"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 function ChevronDownIcon({ className }: { className?: string }) {
   return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={className}>
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      className={className}
+    >
       <path
         d="M2.5 4.5L6 7.5L9.5 4.5"
         stroke="currentColor"
@@ -152,7 +356,13 @@ function ChevronDownIcon({ className }: { className?: string }) {
 
 function ChevronLeftIcon({ className }: { className?: string }) {
   return (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className={className}>
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 14 14"
+      fill="none"
+      className={className}
+    >
       <path
         d="M8.5 3L4.5 7L8.5 11"
         stroke="currentColor"
@@ -166,7 +376,13 @@ function ChevronLeftIcon({ className }: { className?: string }) {
 
 function ChevronRightIcon({ className }: { className?: string }) {
   return (
-    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className={className}>
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 14 14"
+      fill="none"
+      className={className}
+    >
       <path
         d="M5.5 3L9.5 7L5.5 11"
         stroke="currentColor"
@@ -180,7 +396,13 @@ function ChevronRightIcon({ className }: { className?: string }) {
 
 function BackArrowIcon({ className }: { className?: string }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className={className}>
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      className={className}
+    >
       <path
         d="M11 7H3M6.5 3.5L3 7L6.5 10.5"
         stroke="currentColor"
@@ -204,7 +426,7 @@ function TreeBranchLine({ isLast }: { isLast: boolean }) {
       <div
         className="absolute left-[7px] top-1/2 w-[9px] h-[1.5px] bg-black/[0.15]"
         style={{
-          borderBottomLeftRadius: isLast ? '3px' : '0px',
+          borderBottomLeftRadius: isLast ? "3px" : "0px",
         }}
       />
     </div>
@@ -214,26 +436,46 @@ function TreeBranchLine({ isLast }: { isLast: boolean }) {
 // ── Icon resolver ─────────────────────────────────────────────────────────────
 
 export function getSectionIcon(section: LabSection) {
-  const title = (section.title || '').toLowerCase();
-  const id = (section.id || '').toLowerCase();
+  const title = (section.title || "").toLowerCase();
+  const id = (section.id || "").toLowerCase();
   const type = section.type;
 
-  if (id === 'aim' || title.includes('aim') || title.includes('objective')) {
+  if (id === "aim" || title.includes("aim") || title.includes("objective")) {
     return <AimIcon />;
   }
-  if (type === 'apparatus' || id === 'apparatus' || title.includes('apparatus') || title.includes('component')) {
+  if (
+    type === "apparatus" ||
+    id === "apparatus" ||
+    title.includes("apparatus") ||
+    title.includes("component")
+  ) {
     return <ApparatusIcon />;
   }
-  if (type === 'procedure' || id === 'procedure' || title.includes('procedure') || title.includes('step')) {
+  if (
+    type === "procedure" ||
+    id === "procedure" ||
+    title.includes("procedure") ||
+    title.includes("step")
+  ) {
     return <ProcedureIcon />;
   }
-  if (type === 'observation' || id === 'observation' || title.includes('observation') || title.includes('table')) {
+  if (
+    type === "observation" ||
+    id === "observation" ||
+    title.includes("observation") ||
+    title.includes("table")
+  ) {
     return <ObservationsIcon />;
   }
-  if (type === 'conclusion' || id === 'conclusion' || title.includes('conclusion') || title.includes('result')) {
+  if (
+    type === "conclusion" ||
+    id === "conclusion" ||
+    title.includes("conclusion") ||
+    title.includes("result")
+  ) {
     return <ConclusionIcon />;
   }
-  if (id === 'theory' || title.includes('theory') || type === 'text') {
+  if (id === "theory" || title.includes("theory") || type === "text") {
     return <TheoryIcon />;
   }
 
@@ -269,9 +511,11 @@ export function LabSidebar({
   collapsed,
   onToggleCollapse,
 }: LabSidebarProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [collapsedProcedureOpen, setCollapsedProcedureOpen] = useState(false);
-  const [manuallyCollapsedIds, setManuallyCollapsedIds] = useState<Record<string, boolean>>({});
+  const [manuallyCollapsedIds, setManuallyCollapsedIds] = useState<
+    Record<string, boolean>
+  >({});
   const searchInputRef = useRef<HTMLInputElement>(null);
   const procedureContainerRef = useRef<HTMLDivElement>(null);
 
@@ -288,16 +532,16 @@ export function LabSidebar({
       }
     };
 
-    document.addEventListener('pointerdown', handlePointerDownOutside);
+    document.addEventListener("pointerdown", handlePointerDownOutside);
     return () => {
-      document.removeEventListener('pointerdown', handlePointerDownOutside);
+      document.removeEventListener("pointerdown", handlePointerDownOutside);
     };
   }, [collapsedProcedureOpen]);
 
   // Keyboard shortcut ⌘S / Ctrl+S to focus search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
         if (collapsed) {
           onToggleCollapse(false);
@@ -305,8 +549,8 @@ export function LabSidebar({
         setTimeout(() => searchInputRef.current?.focus(), 50);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [collapsed, onToggleCollapse]);
 
   // Filter sections by search query
@@ -316,11 +560,11 @@ export function LabSidebar({
 
     return sections.filter((sec) => {
       if (sec.title.toLowerCase().includes(query)) return true;
-      if (sec.type === 'procedure') {
+      if (sec.type === "procedure") {
         return (sec.steps || []).some(
           (step) =>
-            (step.label || '').toLowerCase().includes(query) ||
-            (step.body || '').toLowerCase().includes(query)
+            (step.label || "").toLowerCase().includes(query) ||
+            (step.body || "").toLowerCase().includes(query),
         );
       }
       return false;
@@ -330,10 +574,10 @@ export function LabSidebar({
   return (
     <aside
       className={`shrink-0 my-3 ml-3 flex flex-col bg-white rounded-[20px] border border-black/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] overflow-visible transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] z-40 select-none ${
-        collapsed ? 'w-[58px]' : 'w-[264px]'
+        collapsed ? "w-[58px]" : "w-[264px]"
       }`}
       style={{
-        height: 'calc(100dvh - 24px)',
+        height: "calc(100dvh - 24px)",
       }}
     >
       {/* ── EXPANDED VIEW ── */}
@@ -355,7 +599,7 @@ export function LabSidebar({
           <div className="mx-3 mt-1 mb-2 px-2.5 py-1.5 rounded-[12px] bg-[#f7f7f8] border border-black/[0.06] flex items-center justify-between gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
             <div className="flex items-center gap-2 min-w-0">
               <span className="font-mono text-[12px] text-[var(--ink-muted)] font-medium shrink-0">
-                {'<>'}
+                {"<>"}
               </span>
               <span
                 className="text-[12.5px] font-semibold text-[var(--ink)] truncate"
@@ -395,13 +639,15 @@ export function LabSidebar({
           <nav className="flex-1 overflow-y-auto px-2 py-1 space-y-0.5 lab-card-scroll">
             {filteredSections.map((section) => {
               const isActive = section.id === activeSectionId;
-              const isProcedure = section.type === 'procedure';
+              const isProcedure = section.type === "procedure";
 
-              const isManuallyCollapsed = manuallyCollapsedIds[section.id] === true;
+              const isManuallyCollapsed =
+                manuallyCollapsedIds[section.id] === true;
               const isExpanded =
                 isProcedure &&
                 (searchQuery.trim().length > 0 ||
-                  ((isActive || expandedProcedureId === section.id) && !isManuallyCollapsed));
+                  ((isActive || expandedProcedureId === section.id) &&
+                    !isManuallyCollapsed));
 
               const handleItemClick = () => {
                 if (isProcedure) {
@@ -429,13 +675,15 @@ export function LabSidebar({
                     onClick={handleItemClick}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-[10px] font-sans text-[13px] text-left transition-all cursor-pointer border-none outline-none ${
                       isActive
-                        ? 'bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
-                        : 'bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03] font-normal'
+                        ? "bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                        : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03] font-normal"
                     }`}
                   >
                     <span
                       className={`shrink-0 transition-colors ${
-                        isActive ? 'text-[var(--ink)]' : 'text-[var(--ink-muted)]'
+                        isActive
+                          ? "text-[var(--ink)]"
+                          : "text-[var(--ink-muted)]"
                       }`}
                     >
                       {getSectionIcon(section)}
@@ -446,7 +694,9 @@ export function LabSidebar({
                       <span
                         className="text-[var(--ink-muted)] transition-transform duration-200"
                         style={{
-                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transform: isExpanded
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
                         }}
                       >
                         <ChevronDownIcon />
@@ -455,38 +705,47 @@ export function LabSidebar({
                   </button>
 
                   {/* Procedure Sub-Steps with Tree Lines */}
-                  {isProcedure && isExpanded && section.type === 'procedure' && Array.isArray(section.steps) && (
-                    <div className="relative pl-3 pr-1 pt-1 pb-1">
-                      <div className="flex flex-col space-y-0.5">
-                        {section.steps.map((step: ProcedureStep, i: number) => {
-                          const isStepActive = isActive && procedureStepIndex === i;
-                          const isLast = i === section.steps.length - 1;
-                          const stepLabel = step.label || `Step ${i + 1}`;
+                  {isProcedure &&
+                    isExpanded &&
+                    section.type === "procedure" &&
+                    Array.isArray(section.steps) && (
+                      <div className="relative pl-3 pr-1 pt-1 pb-1">
+                        <div className="flex flex-col space-y-0.5">
+                          {section.steps.map(
+                            (step: ProcedureStep, i: number) => {
+                              const isStepActive =
+                                isActive && procedureStepIndex === i;
+                              const isLast = i === section.steps.length - 1;
+                              const stepLabel = step.label || `Step ${i + 1}`;
 
-                          return (
-                            <div key={i} className="flex items-center min-h-[28px]">
-                              <TreeBranchLine isLast={isLast} />
+                              return (
+                                <div
+                                  key={i}
+                                  className="flex items-center min-h-[28px]"
+                                >
+                                  <TreeBranchLine isLast={isLast} />
 
-                              <button
-                                onClick={() => {
-                                  onSelectSection(section);
-                                  onSelectProcedureStep(i, section);
-                                }}
-                                title={stepLabel}
-                                className={`flex-1 text-left font-sans text-[12px] py-1 px-2 rounded-[6px] truncate transition-all cursor-pointer border-none outline-none ${
-                                  isStepActive
-                                    ? 'bg-black/[0.06] text-[var(--ink)] font-semibold'
-                                    : 'bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]'
-                                }`}
-                              >
-                                {stepLabel}
-                              </button>
-                            </div>
-                          );
-                        })}
+                                  <button
+                                    onClick={() => {
+                                      onSelectSection(section);
+                                      onSelectProcedureStep(i, section);
+                                    }}
+                                    title={stepLabel}
+                                    className={`flex-1 text-left font-sans text-[12px] py-1 px-2 rounded-[6px] truncate transition-all cursor-pointer border-none outline-none ${
+                                      isStepActive
+                                        ? "bg-black/[0.06] text-[var(--ink)] font-semibold"
+                                        : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]"
+                                    }`}
+                                  >
+                                    {stepLabel}
+                                  </button>
+                                </div>
+                              );
+                            },
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               );
             })}
@@ -511,7 +770,7 @@ export function LabSidebar({
           <div className="relative mb-3 flex items-center justify-center w-full">
             {/* Code icon inside the bar */}
             <div className="w-8 h-8 flex items-center justify-center rounded-[8px] border border-black/[0.08] bg-[#f7f7f8] text-[var(--ink-muted)] font-mono text-[11px] font-semibold select-none">
-              {'<>'}
+              {"<>"}
             </div>
 
             {/* Floating Expand button close to the sidebar dock edge */}
@@ -544,7 +803,7 @@ export function LabSidebar({
           <div className="flex flex-col items-center space-y-2 px-2 overflow-visible w-full">
             {sections.map((section) => {
               const isActive = section.id === activeSectionId;
-              const isProcedure = section.type === 'procedure';
+              const isProcedure = section.type === "procedure";
               const isOpen = isProcedure && collapsedProcedureOpen;
               const stepCount = (section as any).steps?.length || 0;
 
@@ -569,8 +828,8 @@ export function LabSidebar({
                     title={section.title}
                     className={`w-9 h-9 flex items-center justify-center rounded-[10px] transition-all cursor-pointer border-none outline-none ${
                       isActive || isOpen
-                        ? 'bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.06]'
-                        : 'bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]'
+                        ? "bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.06]"
+                        : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]"
                     }`}
                   >
                     {getSectionIcon(section)}
@@ -636,32 +895,36 @@ export function LabSidebar({
                       </svg>
 
                       {/* ── Steps Card OUTSIDE the sidebar (contains NO lines inside) ── */}
-                      <div
-                        className="absolute left-[calc(100%+3px)] top-0 z-[999] bg-white rounded-[14px] border border-black/[0.08] shadow-[0_6px_28px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.04)] p-0.5 min-w-[200px] max-w-[260px] flex flex-col pointer-events-auto"
-                      >
-                        {(section as any).steps.map((step: ProcedureStep, i: number) => {
-                          const isStepActive = isActive && procedureStepIndex === i;
-                          const stepLabel = step.label || `Step ${i + 1}`;
+                      <div className="absolute left-[calc(100%+3px)] top-0 z-[999] bg-white rounded-[14px] border border-black/[0.08] shadow-[0_6px_28px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.04)] p-0.5 min-w-[200px] max-w-[260px] flex flex-col pointer-events-auto">
+                        {(section as any).steps.map(
+                          (step: ProcedureStep, i: number) => {
+                            const isStepActive =
+                              isActive && procedureStepIndex === i;
+                            const stepLabel = step.label || `Step ${i + 1}`;
 
-                          return (
-                            <div key={i} className="h-[36px] flex items-center px-1">
-                              <button
-                                onClick={() => {
-                                  onSelectSection(section);
-                                  onSelectProcedureStep(i, section);
-                                }}
-                                title={stepLabel}
-                                className={`w-full text-left font-sans text-[12px] h-[32px] px-2.5 rounded-[8px] truncate transition-colors cursor-pointer border-none outline-none flex items-center ${
-                                  isStepActive
-                                    ? 'bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.03)]'
-                                    : 'bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]'
-                                }`}
+                            return (
+                              <div
+                                key={i}
+                                className="h-[36px] flex items-center px-1"
                               >
-                                {stepLabel}
-                              </button>
-                            </div>
-                          );
-                        })}
+                                <button
+                                  onClick={() => {
+                                    onSelectSection(section);
+                                    onSelectProcedureStep(i, section);
+                                  }}
+                                  title={stepLabel}
+                                  className={`w-full text-left font-sans text-[12px] h-[32px] px-2.5 rounded-[8px] truncate transition-colors cursor-pointer border-none outline-none flex items-center ${
+                                    isStepActive
+                                      ? "bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+                                      : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]"
+                                  }`}
+                                >
+                                  {stepLabel}
+                                </button>
+                              </div>
+                            );
+                          },
+                        )}
                       </div>
                     </div>
                   )}

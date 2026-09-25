@@ -72,8 +72,10 @@ function CloseIcon() {
 // ─── Regex Builder ────────────────────────────────────────────────────────────
 function buildSearchRegex(query: string): RegExp {
   const parts = query.trim().split(/[-_.\s]+/);
-  const escapedParts = parts.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  return new RegExp(escapedParts.join('[-_.\\s]+'), 'i');
+  const escapedParts = parts.map((p) =>
+    p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+  );
+  return new RegExp(escapedParts.join("[-_.\\s]+"), "i");
 }
 
 // ─── Text highlighting ───────────────────────────────────────────────────────
@@ -115,8 +117,6 @@ function excerpt(text: string, query: string, radius = 60): string {
     return text.slice(0, radius * 2);
   }
 }
-
-
 
 // ─── Grouping ────────────────────────────────────────────────────────────────
 interface ResultGroup {
@@ -217,8 +217,7 @@ export function CommandPalette() {
         )
           return false;
         return (
-          regex.test(e.textLower) ||
-          e.tagsLower.some((t) => regex.test(t))
+          regex.test(e.textLower) || e.tagsLower.some((t) => regex.test(t))
         );
       });
     } catch (e) {

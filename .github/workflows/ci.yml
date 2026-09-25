@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    name: Type check, lint and smoke tests
+    name: Type check, lint, format and smoke tests
     runs-on: ubuntu-latest
 
     steps:
@@ -28,6 +28,9 @@ jobs:
 
       - name: Run lint
         run: npm run lint
+
+      - name: Run Prettier check
+        run: npm run format:check
 
       - name: Run smoke tests
         run: npm test

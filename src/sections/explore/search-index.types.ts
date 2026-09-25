@@ -7,7 +7,8 @@
  * CommandPalette.tsx in place of the placeholder import.
  */
 
-export type SearchSection = 'Title' | 'Description' | 'Theory' | 'Procedure' | 'Apparatus';
+export type SearchSection =
+  "Title" | "Description" | "Theory" | "Procedure" | "Apparatus";
 
 export interface SearchIndexEntry {
   /** Unique per entry, e.g. `${circuitId}:theory:2` */
