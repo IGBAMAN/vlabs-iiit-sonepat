@@ -1,4 +1,4 @@
-import { type ApparatusSection } from '@/labs/lab-content.types';
+import { type ApparatusSection } from "@/labs/lab-content.types";
 
 export const apparatus: ApparatusSection = {
   id: "apparatus",
@@ -12,7 +12,8 @@ export const apparatus: ApparatusSection = {
     },
     {
       name: "2N7000 N-ch MOSFET",
-      specification: "TO-92, $V_{TH}\\approx 2\\,\\text{V}$, $I_D\\leq 200\\,\\text{mA}$",
+      specification:
+        "TO-92, $V_{TH}\\approx 2\\,\\text{V}$, $I_D\\leq 200\\,\\text{mA}$",
       quantity: "1",
     },
     {

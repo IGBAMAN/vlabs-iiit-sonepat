@@ -1,4 +1,4 @@
-import { type ObservationSection } from '@/labs/lab-content.types';
+import { type ObservationSection } from "@/labs/lab-content.types";
 
 export const observations: ObservationSection = {
   id: "observations",
@@ -19,38 +19,10 @@ export const observations: ObservationSection = {
       "Result",
     ],
     rows: [
-      [
-        3,
-        5,
-        8,
-        "1 0 0 0",
-        0,
-        "8 (no overflow)",
-      ],
-      [
-        7,
-        9,
-        16,
-        "0 0 0 0",
-        1,
-        "16 (overflow)",
-      ],
-      [
-        10,
-        2,
-        12,
-        "1 1 0 0",
-        0,
-        "12 (no overflow)",
-      ],
-      [
-        15,
-        15,
-        30,
-        "1 1 1 0",
-        1,
-        "30 (overflow)",
-      ],
+      [3, 5, 8, "1 0 0 0", 0, "8 (no overflow)"],
+      [7, 9, 16, "0 0 0 0", 1, "16 (overflow)"],
+      [10, 2, 12, "1 1 0 0", 0, "12 (no overflow)"],
+      [15, 15, 30, "1 1 1 0", 1, "30 (overflow)"],
     ],
   },
 };

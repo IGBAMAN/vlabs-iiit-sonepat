@@ -1,9 +1,15 @@
-import Link from 'next/link';
-import { Prose, DocEyebrow, Callout, DocNav, DocNavLink } from '@/sections/docs/doc-primitives';
+import Link from "next/link";
+import {
+  Prose,
+  DocEyebrow,
+  Callout,
+  DocNav,
+  DocNavLink,
+} from "@/sections/docs/doc-primitives";
 
 export const metadata = {
-  title: 'Quickstart — VLabs Docs',
-  description: 'Add your first circuit to VLabs in under 5 minutes.',
+  title: "Quickstart — VLabs Docs",
+  description: "Add your first circuit to VLabs in under 5 minutes.",
 };
 
 export default function QuickstartPage() {
@@ -13,8 +19,9 @@ export default function QuickstartPage() {
       <h1>Quickstart</h1>
 
       <p>
-        This guide adds a new circuit to VLabs from scratch. You'll write a circuit
-        definition, register it, and see it live — no renderer changes needed.
+        This guide adds a new circuit to VLabs from scratch. You'll write a
+        circuit definition, register it, and see it live — no renderer changes
+        needed.
       </p>
 
       <Callout $tone="info">
@@ -28,8 +35,9 @@ export default function QuickstartPage() {
       <h2>Step 1 — Create the circuit file</h2>
 
       <p>
-        Every circuit lives in its own folder under <code>src/labs/circuits/</code>.
-        Create <code>src/labs/circuits/sr-latch/index.ts</code>:
+        Every circuit lives in its own folder under{" "}
+        <code>src/labs/circuits/</code>. Create{" "}
+        <code>src/labs/circuits/sr-latch/index.ts</code>:
       </p>
 
       <pre>{`import { type Circuit } from '@/labs/types';
@@ -115,31 +123,37 @@ export {
       <h2>Step 3 — Done</h2>
 
       <p>
-        The circuit appears automatically in the explore page sidebar and gets its own
-        step-by-step page at <code>/labs/sr-latch</code>. No other changes needed.
+        The circuit appears automatically in the explore page sidebar and gets
+        its own step-by-step page at <code>/labs/sr-latch</code>. No other
+        changes needed.
       </p>
 
       <Callout $tone="tip">
         <strong>Generate with AI instead</strong>
         <p>
           Paste <code>src/labs/COMPONENTS.md</code> into Claude and say
-          "Generate an SR latch circuit". Save the output directly to step 1's file path.
-          The AI knows the full schema, pin reference syntax, and column layout rules.
+          "Generate an SR latch circuit". Save the output directly to step 1's
+          file path. The AI knows the full schema, pin reference syntax, and
+          column layout rules.
         </p>
       </Callout>
 
       <h2>What if my component type doesn't exist yet?</h2>
 
       <p>
-        If you need a part that isn't in the registry (e.g. a 7-segment display), you
-        need to add geometry for it first. See{' '}
-        <Link href="/docs/geometry">Writing geometry</Link> and{' '}
+        If you need a part that isn't in the registry (e.g. a 7-segment
+        display), you need to add geometry for it first. See{" "}
+        <Link href="/docs/geometry">Writing geometry</Link> and{" "}
         <Link href="/docs/registry">Registry &amp; renderer</Link>.
       </p>
 
       <DocNav>
-        <DocNavLink as={Link} href="/docs" data-dir="prev">Overview</DocNavLink>
-        <DocNavLink as={Link} href="/docs/components" data-dir="next">Component types</DocNavLink>
+        <DocNavLink as={Link} href="/docs" data-dir="prev">
+          Overview
+        </DocNavLink>
+        <DocNavLink as={Link} href="/docs/components" data-dir="next">
+          Component types
+        </DocNavLink>
       </DocNav>
     </Prose>
   );

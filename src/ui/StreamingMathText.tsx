@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { usePrefersReducedMotion } from '@/platform/motion';
+import { usePrefersReducedMotion } from "@/platform/motion";
 
-import { MathText } from './Math';
+import { MathText } from "./Math";
 
 function isMathToken(token: string): boolean {
   return (
-    (token.startsWith('$$') && token.endsWith('$$') && token.length > 4) ||
-    (token.startsWith('$') && token.endsWith('$') && token.length > 2)
+    (token.startsWith("$$") && token.endsWith("$$") && token.length > 4) ||
+    (token.startsWith("$") && token.endsWith("$") && token.length > 2)
   );
 }
 
@@ -28,7 +28,7 @@ export function tokenizeForStream(text: string): string[] {
 
     seg.split(/(\*\*[^*]+\*\*|\*[^*]+\*|\n)/g).forEach((chunk) => {
       if (!chunk) return;
-      if (chunk === '\n' || chunk.startsWith('**') || chunk.startsWith('*')) {
+      if (chunk === "\n" || chunk.startsWith("**") || chunk.startsWith("*")) {
         tokens.push(chunk);
         return;
       }
@@ -115,7 +115,7 @@ export function StreamingMathText({
       const token = tokens[index - 1]!;
       const delay = isMathToken(token)
         ? 90 + Math.random() * 50
-        : token === '\n'
+        : token === "\n"
           ? 140
           : /^\s+$/.test(token)
             ? 0
@@ -132,14 +132,17 @@ export function StreamingMathText({
     };
   }, [streamKey, active, reducedMotion, text, tokens, tokens.length]);
 
-  const visibleText = useMemo(() => tokens.slice(0, revealed).join(''), [tokens, revealed]);
+  const visibleText = useMemo(
+    () => tokens.slice(0, revealed).join(""),
+    [tokens, revealed],
+  );
 
   return (
     <span
       role="presentation"
       onClick={done ? undefined : finish}
-      className={done ? undefined : 'cursor-pointer'}
-      title={done ? undefined : 'Click to show all'}
+      className={done ? undefined : "cursor-pointer"}
+      title={done ? undefined : "Click to show all"}
     >
       <MathText text={visibleText} />
       {!done && active && (
@@ -199,8 +202,8 @@ export function StreamingTheoryParagraphs({
     <div
       role="presentation"
       onClick={streaming ? skipAll : undefined}
-      className={streaming ? 'cursor-pointer' : undefined}
-      title={streaming ? 'Click to show all' : undefined}
+      className={streaming ? "cursor-pointer" : undefined}
+      title={streaming ? "Click to show all" : undefined}
     >
       {paragraphs.map((p, i) => {
         if (i < activePara) {

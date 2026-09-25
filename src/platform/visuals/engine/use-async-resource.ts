@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 type AsyncResourceOptions<TResource> = {
   dispose?: (resource: TResource) => void;
@@ -40,7 +40,7 @@ export function useAsyncResource<TResource>(
           setResource(result);
         },
         (error: unknown) => {
-          if (!cancelled && process.env.NODE_ENV !== 'production') {
+          if (!cancelled && process.env.NODE_ENV !== "production") {
             console.error(error);
           }
         },

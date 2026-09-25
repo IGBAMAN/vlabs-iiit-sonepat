@@ -1,9 +1,16 @@
-import Link from 'next/link';
-import { Prose, DocEyebrow, Callout, DocNav, DocNavLink } from '@/sections/docs/doc-primitives';
+import Link from "next/link";
+import {
+  Prose,
+  DocEyebrow,
+  Callout,
+  DocNav,
+  DocNavLink,
+} from "@/sections/docs/doc-primitives";
 
 export const metadata = {
-  title: 'Writing Geometry — VLabs Docs',
-  description: 'How to write a Three.js geometry builder for a new component type.',
+  title: "Writing Geometry — VLabs Docs",
+  description:
+    "How to write a Three.js geometry builder for a new component type.",
 };
 
 export default function GeometryPage() {
@@ -22,24 +29,32 @@ export default function GeometryPage() {
 
       <h2>The three-file edit</h2>
 
-      <p>Adding a new renderable component type requires exactly three changes:</p>
+      <p>
+        Adding a new renderable component type requires exactly three changes:
+      </p>
 
       <ol>
         <li>
-          <strong>Add the variant to <code>types.ts</code></strong> —
-          extends the <code>ComponentInstance</code> discriminated union.
+          <strong>
+            Add the variant to <code>types.ts</code>
+          </strong>{" "}
+          — extends the <code>ComponentInstance</code> discriminated union.
         </li>
         <li>
-          <strong>Write the geometry builder</strong> —
-          in <code>geometry/extra-components.ts</code> (or a new file).
+          <strong>Write the geometry builder</strong> — in{" "}
+          <code>geometry/extra-components.ts</code> (or a new file).
         </li>
         <li>
-          <strong>Add one registry entry to <code>LabScene.tsx</code></strong> —
-          maps the type string to the builder function.
+          <strong>
+            Add one registry entry to <code>LabScene.tsx</code>
+          </strong>{" "}
+          — maps the type string to the builder function.
         </li>
       </ol>
 
-      <p>The renderer itself never changes. That's the point of the registry.</p>
+      <p>
+        The renderer itself never changes. That's the point of the registry.
+      </p>
 
       <hr />
 
@@ -134,13 +149,34 @@ export function build7SegDisplayStandalone(): THREE.Group {
       <h3>Geometry style rules</h3>
 
       <ul>
-        <li>Use only Three.js primitives: <code>BoxGeometry</code>, <code>CylinderGeometry</code>, <code>SphereGeometry</code>, <code>TorusGeometry</code>.</li>
-        <li>No <code>.glb</code> files, no textures, no external assets.</li>
-        <li>White/cream fill + black wireframe edges — use <code>M.white()</code>, <code>M.cream()</code>, <code>M.dark()</code>.</li>
-        <li>Leads always use <code>M.gold()</code>.</li>
-        <li>Body height expressed in <code>PITCH</code> multiples (<code>PITCH = 0.18</code> units ≈ 2.54mm).</li>
-        <li>Position relative to <code>TOP_Y</code> (the breadboard surface). Leads hang below into the board.</li>
-        <li>Both variants: board-mounted (takes <code>THREE.Vector3</code> hole positions) and <code>Standalone</code> (centred at origin for display cards).</li>
+        <li>
+          Use only Three.js primitives: <code>BoxGeometry</code>,{" "}
+          <code>CylinderGeometry</code>, <code>SphereGeometry</code>,{" "}
+          <code>TorusGeometry</code>.
+        </li>
+        <li>
+          No <code>.glb</code> files, no textures, no external assets.
+        </li>
+        <li>
+          White/cream fill + black wireframe edges — use <code>M.white()</code>,{" "}
+          <code>M.cream()</code>, <code>M.dark()</code>.
+        </li>
+        <li>
+          Leads always use <code>M.gold()</code>.
+        </li>
+        <li>
+          Body height expressed in <code>PITCH</code> multiples (
+          <code>PITCH = 0.18</code> units ≈ 2.54mm).
+        </li>
+        <li>
+          Position relative to <code>TOP_Y</code> (the breadboard surface).
+          Leads hang below into the board.
+        </li>
+        <li>
+          Both variants: board-mounted (takes <code>THREE.Vector3</code> hole
+          positions) and <code>Standalone</code> (centred at origin for display
+          cards).
+        </li>
       </ul>
 
       <h3>Available material helpers</h3>
@@ -198,16 +234,22 @@ const COMPONENT_REGISTRY: Record<string, BuildFn> = {
       <Callout $tone="tip">
         <strong>That's the entire change to the renderer</strong>
         <p>
-          One import and one object entry. The renderer's <code>buildInstance</code>
-          function is generic — it calls <code>COMPONENT_REGISTRY[inst.type]</code>
+          One import and one object entry. The renderer's{" "}
+          <code>buildInstance</code>
+          function is generic — it calls{" "}
+          <code>COMPONENT_REGISTRY[inst.type]</code>
           and returns whatever the builder gives back. No switch statement, no
           fallthrough, no case to forget.
         </p>
       </Callout>
 
       <DocNav>
-        <DocNavLink as={Link} href="/docs/components" data-dir="prev">Component types</DocNavLink>
-        <DocNavLink as={Link} href="/docs/registry" data-dir="next">Registry & renderer</DocNavLink>
+        <DocNavLink as={Link} href="/docs/components" data-dir="prev">
+          Component types
+        </DocNavLink>
+        <DocNavLink as={Link} href="/docs/registry" data-dir="next">
+          Registry & renderer
+        </DocNavLink>
       </DocNav>
     </Prose>
   );

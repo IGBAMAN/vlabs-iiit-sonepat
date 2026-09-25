@@ -1,4 +1,4 @@
-import { type ObservationSection } from '@/labs/lab-content.types';
+import { type ObservationSection } from "@/labs/lab-content.types";
 
 export const observations: ObservationSection = {
   id: "observations",
@@ -20,50 +20,10 @@ export const observations: ObservationSection = {
       "Binary code",
     ],
     rows: [
-      [
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        "00 → I0",
-      ],
-      [
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        "01 → I1",
-      ],
-      [
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        "10 → I2",
-      ],
-      [
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        "11 → I3",
-      ],
+      [0, 0, 0, 1, 0, 0, 0, 0, "00 → I0"],
+      [0, 0, 1, 0, 0, 1, 0, 1, "01 → I1"],
+      [0, 1, 0, 0, 1, 0, 1, 0, "10 → I2"],
+      [1, 0, 0, 0, 1, 1, 1, 1, "11 → I3"],
     ],
   },
 };

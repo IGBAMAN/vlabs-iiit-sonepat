@@ -1,4 +1,4 @@
-import { type ObservationSection } from '@/labs/lab-content.types';
+import { type ObservationSection } from "@/labs/lab-content.types";
 
 export const observations: ObservationSection = {
   id: "observations",
@@ -16,42 +16,12 @@ export const observations: ObservationSection = {
       "$\\alpha = I_C/I_E$",
     ],
     rows: [
-      [
-        0.5,
-        "0.00",
-        "0.00",
-        "—",
-      ],
-      [
-        0.6,
-        "0.28",
-        "0.27",
-        "0.964",
-      ],
-      [
-        0.65,
-        "1.05",
-        "1.04",
-        "0.990",
-      ],
-      [
-        0.7,
-        "2.10",
-        "2.08",
-        "0.990",
-      ],
-      [
-        0.75,
-        "4.20",
-        "4.15",
-        "0.988",
-      ],
-      [
-        0.8,
-        "7.60",
-        "7.52",
-        "0.989",
-      ],
+      [0.5, "0.00", "0.00", "—"],
+      [0.6, "0.28", "0.27", "0.964"],
+      [0.65, "1.05", "1.04", "0.990"],
+      [0.7, "2.10", "2.08", "0.990"],
+      [0.75, "4.20", "4.15", "0.988"],
+      [0.8, "7.60", "7.52", "0.989"],
     ],
   },
 };
