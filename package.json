@@ -10,6 +10,7 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "format:check": "prettier --check .",
+    "format": "prettier --write .",
     "test:coverage": "vitest run --coverage",
     "new-lab": "node scripts/new-lab.mjs"
   },
