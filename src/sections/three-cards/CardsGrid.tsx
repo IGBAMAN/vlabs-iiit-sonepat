@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Children, useCallback, useRef, type ReactNode } from 'react';
+import { Children, useCallback, useRef, type ReactNode } from "react";
 
-import { useScheduledOnScroll } from '@/platform/motion';
+import { useScheduledOnScroll } from "@/platform/motion";
 
-import { applyCardRevealLayout } from './card-reveal-layout';
+import { applyCardRevealLayout } from "./card-reveal-layout";
 
 // The shared card grid: each card rides a slot the scroll-driven reveal
 // writes transform/opacity to directly — no per-frame React work.

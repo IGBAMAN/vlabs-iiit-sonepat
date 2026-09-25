@@ -1,4 +1,4 @@
-import { type SceneProcedureStep } from '@/labs/experiments/types';
+import { type SceneProcedureStep } from "@/labs/experiments/types";
 
 export const step: SceneProcedureStep = {
   label: "Measure the fixed-bias Q-point.",

@@ -1,4 +1,4 @@
-import { type IconComponent } from '@/icons';
+import { type IconComponent } from "@/icons";
 
 export type MenuSocialLink = {
   ariaLabel: string;
@@ -6,4 +6,3 @@ export type MenuSocialLink = {
   icon: IconComponent;
   showInDesktop: boolean;
 };
-

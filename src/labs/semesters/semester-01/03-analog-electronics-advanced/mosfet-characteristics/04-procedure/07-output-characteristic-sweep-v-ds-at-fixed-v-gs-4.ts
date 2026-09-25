@@ -1,4 +1,4 @@
-import { type SceneProcedureStep } from '@/labs/experiments/types';
+import { type SceneProcedureStep } from "@/labs/experiments/types";
 
 export const step: SceneProcedureStep = {
   label: "Output characteristic: sweep V_DS at fixed V_GS = 4 V.",

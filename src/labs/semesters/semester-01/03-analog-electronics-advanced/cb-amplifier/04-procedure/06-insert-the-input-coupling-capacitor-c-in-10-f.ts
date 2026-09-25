@@ -1,4 +1,4 @@
-import { type SceneProcedureStep } from '@/labs/experiments/types';
+import { type SceneProcedureStep } from "@/labs/experiments/types";
 
 export const step: SceneProcedureStep = {
   label: "Insert the input coupling capacitor C_in (10 µF).",

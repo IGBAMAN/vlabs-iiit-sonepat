@@ -6,19 +6,32 @@ import {
   useRef,
   useState,
   useCallback,
+  useDeferredValue,
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
 
-import { color } from "@/tokens";
-import { SEARCH_INDEX } from "@/sections/explore/search-index.data"; // ← swap for your real SEARCH_INDEX export
+import { SEARCH_INDEX } from "@/sections/explore/search-index.output";
 import { type SearchIndexEntry } from "@/sections/explore/search-index.types";
 import { CircuitPreview } from "@/sections/explore/CircuitPreview";
+
+const OPTIMIZED_INDEX = SEARCH_INDEX.map((e) => ({
+  ...e,
+  textLower: e.text.toLowerCase(),
+  tagsLower: e.tags.map((t) => t.toLowerCase()),
+}));
 
 // ─── Icons ─────────────────────────────────────────────────────────────────
 function SearchIcon({ className }: { className?: string }) {
   return (
-    <svg aria-hidden fill="none" height="1em" viewBox="0 0 14 14" width="1em" className={className}>
+    <svg
+      aria-hidden
+      fill="none"
+      height="1em"
+      viewBox="0 0 14 14"
+      width="1em"
+      className={className}
+    >
       <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.3" />
       <path
         d="M9.5 9.5L12.5 12.5"
@@ -56,57 +69,53 @@ function CloseIcon() {
   );
 }
 
-function CircuitIcon() {
-  // Generic breadboard-ish placeholder for preview cards without a real thumbnail.
-  return (
-    <svg aria-hidden fill="none" height="100%" viewBox="0 0 64 40" width="100%">
-      <rect
-        height="36"
-        rx="3"
-        stroke={color("black-20")}
-        strokeWidth="1"
-        width="60"
-        x="2"
-        y="2"
-      />
-      {Array.from({ length: 6 }).map((_, row) =>
-        Array.from({ length: 10 }).map((_, col) => (
-          <circle
-            cx={7 + col * 5.4}
-            cy={7 + row * 5.2}
-            fill={color("black-20")}
-            key={`${row}-${col}`}
-            r="0.8"
-          />
-        )),
-      )}
-    </svg>
+// ─── Regex Builder ────────────────────────────────────────────────────────────
+function buildSearchRegex(query: string): RegExp {
+  const parts = query.trim().split(/[-_.\s]+/);
+  const escapedParts = parts.map((p) =>
+    p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
   );
+  return new RegExp(escapedParts.join("[-_.\\s]+"), "i");
 }
 
 // ─── Text highlighting ───────────────────────────────────────────────────────
 function highlight(text: string, query: string): ReactNode {
   if (!query.trim()) return text;
-  const idx = text.toLowerCase().indexOf(query.trim().toLowerCase());
-  if (idx === -1) return text;
-  const end = idx + query.trim().length;
-  return (
-    <>
-      {text.slice(0, idx)}
-      <mark className="rounded-[3px] bg-[#dcfce7] px-[3px] py-[1px] text-[#15803d]">
-        {text.slice(idx, end)}
-      </mark>
-      {text.slice(end)}
-    </>
-  );
+  try {
+    const regex = buildSearchRegex(query);
+    const match = text.match(regex);
+    if (!match || match.index === undefined) return text;
+
+    const idx = match.index;
+    const end = idx + match[0].length;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <mark className="rounded-[3px] bg-[#dcfce7] px-[3px] py-[1px] text-[#15803d]">
+          {text.slice(idx, end)}
+        </mark>
+        {text.slice(end)}
+      </>
+    );
+  } catch (e) {
+    return text;
+  }
 }
 
 function excerpt(text: string, query: string, radius = 60): string {
-  const idx = text.toLowerCase().indexOf(query.trim().toLowerCase());
-  if (idx === -1) return text.slice(0, radius * 2);
-  const start = Math.max(0, idx - radius);
-  const end = Math.min(text.length, idx + query.length + radius);
-  return `${start > 0 ? "…" : ""}${text.slice(start, end)}${end < text.length ? "…" : ""}`;
+  if (!query.trim()) return text.slice(0, radius * 2);
+  try {
+    const regex = buildSearchRegex(query);
+    const match = text.match(regex);
+    if (!match || match.index === undefined) return text.slice(0, radius * 2);
+
+    const idx = match.index;
+    const start = Math.max(0, idx - radius);
+    const end = Math.min(text.length, idx + match[0].length + radius);
+    return `${start > 0 ? "…" : ""}${text.slice(start, end)}${end < text.length ? "…" : ""}`;
+  } catch (e) {
+    return text.slice(0, radius * 2);
+  }
 }
 
 // ─── Grouping ────────────────────────────────────────────────────────────────
@@ -131,7 +140,13 @@ function groupMatches(matches: SearchIndexEntry[]): ResultGroup[] {
       entries.find((e) => e.section === "Title") ??
       entries.find((e) => e.section === "Description") ??
       entries[0];
-    const snippets = entries.filter((e) => e.section !== "Title").slice(0, 3);
+    const snippets = [];
+    for (const e of entries) {
+      if (e.section !== "Title") {
+        snippets.push(e);
+        if (snippets.length === 3) break;
+      }
+    }
     groups.push({
       circuitId,
       header,
@@ -153,8 +168,10 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+  const deferredQuery = useDeferredValue(query);
+
   const semesterOptions = useMemo(
-    () => Array.from(new Set(SEARCH_INDEX.map((e) => e.semesterLabel))),
+    () => Array.from(new Set(OPTIMIZED_INDEX.map((e) => e.semesterLabel))),
     [],
   );
 
@@ -190,20 +207,23 @@ export function CommandPalette() {
   }, [open]);
 
   const matches = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
-    return SEARCH_INDEX.filter((e) => {
-      if (
-        selectedSemesters.length &&
-        !selectedSemesters.includes(e.semesterLabel)
-      )
-        return false;
-      return (
-        e.text.toLowerCase().includes(q) ||
-        e.tags.some((t) => t.toLowerCase().includes(q))
-      );
-    });
-  }, [query, selectedSemesters]);
+    if (!deferredQuery.trim()) return [];
+    try {
+      const regex = buildSearchRegex(deferredQuery);
+      return OPTIMIZED_INDEX.filter((e) => {
+        if (
+          selectedSemesters.length &&
+          !selectedSemesters.includes(e.semesterLabel)
+        )
+          return false;
+        return (
+          regex.test(e.textLower) || e.tagsLower.some((t) => regex.test(t))
+        );
+      });
+    } catch (e) {
+      return [];
+    }
+  }, [deferredQuery, selectedSemesters]);
 
   const groups = useMemo(() => groupMatches(matches), [matches]);
 
@@ -218,6 +238,14 @@ export function CommandPalette() {
   );
 
   const previewCards = useMemo(() => groups.slice(0, 4), [groups]);
+
+  // O(1) id → position lookup, built once per render instead of re-scanning
+  // flatItems with findIndex for every row rendered below.
+  const indexById = useMemo(() => {
+    const m = new Map<string, number>();
+    flatItems.forEach((f, i) => m.set(f.entry.id, i));
+    return m;
+  }, [flatItems]);
 
   const navigate = useCallback(
     (entry: SearchIndexEntry) => {
@@ -282,9 +310,7 @@ export function CommandPalette() {
             aria-label="Search"
           >
             {/* Input row */}
-            <div 
-              className="flex shrink-0 items-center gap-[10px] rounded-[16px] border border-[var(--line)] bg-white px-[20px] py-[14px] shadow-sm"
-            >
+            <div className="flex shrink-0 items-center gap-[10px] rounded-[16px] border border-[var(--line)] bg-white px-[20px] py-[14px] shadow-sm">
               <span className="text-[var(--ink-muted)]">
                 <SearchIcon className="text-[1.125rem]" />
               </span>
@@ -316,9 +342,7 @@ export function CommandPalette() {
             </div>
 
             {/* Content Container */}
-            <div 
-              className="flex min-h-[400px] flex-1 flex-col overflow-hidden rounded-[16px] border border-[var(--line)] bg-white shadow-lg"
-            >
+            <div className="flex min-h-[400px] flex-1 flex-col overflow-hidden rounded-[16px] border border-[var(--line)] bg-white shadow-lg">
               {/* Filter pills */}
               <div className="relative flex flex-wrap items-center gap-[8px] border-b border-[var(--line)] px-[20px] py-[10px]">
                 <span className="font-sans text-[0.75rem] text-[var(--ink-muted)]">
@@ -390,7 +414,8 @@ export function CommandPalette() {
                       Search VLabs
                     </p>
                     <p className="mt-[4px] max-w-[240px] font-sans text-[0.6875rem] text-[var(--ink-subtle)]">
-                      Find experiments, theories, procedures, and apparatus items across all semesters.
+                      Find experiments, theories, procedures, and apparatus
+                      items across all semesters.
                     </p>
                   </div>
                 )}
@@ -408,9 +433,7 @@ export function CommandPalette() {
                 )}
 
                 {groups.map((g) => {
-                  let runningIdx = flatItems.findIndex(
-                    (f) => f.entry.id === g.header.id,
-                  );
+                  const headerIdx = indexById.get(g.header.id) ?? -1;
                   return (
                     <div className="mb-[16px]" key={g.circuitId}>
                       <button
@@ -421,7 +444,7 @@ export function CommandPalette() {
                             : undefined
                         }
                         onClick={() => navigate(g.header)}
-                        onMouseEnter={() => setActiveIdx(runningIdx)}
+                        onMouseEnter={() => setActiveIdx(headerIdx)}
                         role="option"
                         aria-selected={
                           flatItems[activeIdx]?.entry.id === g.header.id
@@ -432,15 +455,15 @@ export function CommandPalette() {
                           {g.breadcrumb}
                         </div>
                         <div className="font-serif text-[1rem] font-semibold text-[var(--ink)] tracking-tight">
-                          {g.header.experimentNumber ? `${g.header.experimentNumber}. ` : ""}
+                          {g.header.experimentNumber
+                            ? `${g.header.experimentNumber}. `
+                            : ""}
                           {g.header.experimentTitle}
                         </div>
                       </button>
 
                       {g.snippets.map((s) => {
-                        const idx = flatItems.findIndex(
-                          (f) => f.entry.id === s.id,
-                        );
+                        const idx = indexById.get(s.id) ?? -1;
                         return (
                           <button
                             className="block w-full rounded-[8px] px-[12px] py-[8px] text-left data-[active]:bg-[#f9fafb] hover:bg-[#f9fafb] transition-colors"
@@ -459,7 +482,11 @@ export function CommandPalette() {
                             type="button"
                           >
                             <div className="pb-[4px] font-sans text-[0.625rem] text-[var(--ink-subtle)]">
-                              {g.breadcrumb} &gt; {g.header.experimentNumber ? `${g.header.experimentNumber}. ` : ""}{g.header.experimentTitle} &gt; {s.section}
+                              {g.breadcrumb} &gt;{" "}
+                              {g.header.experimentNumber
+                                ? `${g.header.experimentNumber}. `
+                                : ""}
+                              {g.header.experimentTitle} &gt; {s.section}
                             </div>
                             <div className="border-l-[2px] border-[var(--line)] pl-[10px] font-serif text-[0.8125rem] text-[var(--ink)] text-left leading-relaxed">
                               {highlight(excerpt(s.text, query), query)}
@@ -512,7 +539,8 @@ export function CommandPalette() {
 
               {/* Footer */}
               <div className="border-t border-[var(--line)] px-[16px] py-[10px] text-center font-sans text-[0.625rem] text-[var(--ink-subtle)]">
-                Can&rsquo;t find the experiment you&rsquo;re looking for? Contact{" "}
+                Can&rsquo;t find the experiment you&rsquo;re looking for?
+                Contact{" "}
                 <a
                   className="text-[var(--ink-muted)] underline"
                   href="mailto:support@technicalsociety.iiitsonepat.ac.in"

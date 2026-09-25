@@ -1,9 +1,15 @@
-import Link from 'next/link';
-import { Prose, DocEyebrow, DocNav, DocNavLink } from '@/sections/docs/doc-primitives';
+import Link from "next/link";
+import {
+  Prose,
+  DocEyebrow,
+  DocNav,
+  DocNavLink,
+} from "@/sections/docs/doc-primitives";
 
 export const metadata = {
-  title: 'Circuit Schema — VLabs Docs',
-  description: 'The full Circuit type, its fields, and how to structure a circuit definition.',
+  title: "Circuit Schema — VLabs Docs",
+  description:
+    "The full Circuit type, its fields, and how to structure a circuit definition.",
 };
 
 export default function CircuitsPage() {
@@ -13,9 +19,10 @@ export default function CircuitsPage() {
       <h1>Circuit schema</h1>
 
       <p>
-        A circuit is a plain TypeScript object conforming to the <code>Circuit</code> type.
-        It lives in its own file, imports no renderer code, and can be generated entirely
-        by an AI given the component reference.
+        A circuit is a plain TypeScript object conforming to the{" "}
+        <code>Circuit</code> type. It lives in its own file, imports no renderer
+        code, and can be generated entirely by an AI given the component
+        reference.
       </p>
 
       <hr />
@@ -72,8 +79,8 @@ export const SrLatch: Circuit = {
       <h2>components</h2>
 
       <p>
-        An array of <code>ComponentInstance</code> values. Order doesn't matter for
-        rendering — the renderer iterates all of them. Conventional order:
+        An array of <code>ComponentInstance</code> values. Order doesn't matter
+        for rendering — the renderer iterates all of them. Conventional order:
       </p>
 
       <ol>
@@ -87,16 +94,17 @@ export const SrLatch: Circuit = {
       </ol>
 
       <p>
-        See <Link href="/docs/components">Component types</Link> for every supported
-        type and its fields.
+        See <Link href="/docs/components">Component types</Link> for every
+        supported type and its fields.
       </p>
 
       <h2>steps</h2>
 
       <p>
-        An ordered array of <code>Step</code> values that define the assembly walkthrough.
-        See <Link href="/docs/steps">Steps &amp; highlighting</Link> for the full step
-        authoring guide.
+        An ordered array of <code>Step</code> values that define the assembly
+        walkthrough. See{" "}
+        <Link href="/docs/steps">Steps &amp; highlighting</Link> for the full
+        step authoring guide.
       </p>
 
       <h2>truthTable (optional)</h2>
@@ -114,8 +122,8 @@ export const SrLatch: Circuit = {
 
       <p>
         Drives the truth table panel in the lab UI. Input/output keys must be
-        consistent with <code>activeInputs</code> keys in the steps.
-        Omit entirely for circuits without a meaningful truth table.
+        consistent with <code>activeInputs</code> keys in the steps. Omit
+        entirely for circuits without a meaningful truth table.
       </p>
 
       <h2>Registering a new circuit</h2>
@@ -133,8 +141,12 @@ export const ALL_CIRCUITS: Circuit[] = [
 export { /* ..., */ SrLatch };           // ← re-export`}</pre>
 
       <DocNav>
-        <DocNavLink as={Link} href="/docs/registry" data-dir="prev">Registry &amp; renderer</DocNavLink>
-        <DocNavLink as={Link} href="/docs/pins" data-dir="next">Pin references</DocNavLink>
+        <DocNavLink as={Link} href="/docs/registry" data-dir="prev">
+          Registry &amp; renderer
+        </DocNavLink>
+        <DocNavLink as={Link} href="/docs/pins" data-dir="next">
+          Pin references
+        </DocNavLink>
       </DocNav>
     </Prose>
   );

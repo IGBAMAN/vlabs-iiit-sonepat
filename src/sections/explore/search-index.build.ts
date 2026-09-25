@@ -1,12 +1,14 @@
-import { type ExploreExperiment } from '@/sections/explore/explore.data';
-import { type SearchIndexEntry } from './search-index.types';
+import { type ExploreExperiment } from "@/sections/explore/explore.data";
+import { type SearchIndexEntry } from "./search-index.types";
 
-export type ContentLookup = (circuitId: string) => {
-  theory?: string[];
-  procedure?: string[];
-  apparatus?: string[];
-  previewImage?: string;
-} | undefined;
+export type ContentLookup = (circuitId: string) =>
+  | {
+      theory?: string[];
+      procedure?: string[];
+      apparatus?: string[];
+      previewImage?: string;
+    }
+  | undefined;
 
 export type SearchIndexInputExperiment = ExploreExperiment & {
   subjectTitle: string;
@@ -25,15 +27,20 @@ export function buildSearchIndex(
       experimentTitle: exp.title,
       subjectTitle: exp.subjectTitle,
       semesterLabel: exp.semesterLabel,
-      labRoute: exp.labRoute ?? '/explore',
+      labRoute: exp.labRoute ?? "/explore",
       tags: [...exp.tags],
     };
 
-    index.push({ ...base, id: `${exp.circuitId}:title`, section: 'Title', text: exp.title });
+    index.push({
+      ...base,
+      id: `${exp.circuitId}:title`,
+      section: "Title",
+      text: exp.title,
+    });
     index.push({
       ...base,
       id: `${exp.circuitId}:description`,
-      section: 'Description',
+      section: "Description",
       text: exp.description,
     });
 
@@ -43,7 +50,7 @@ export function buildSearchIndex(
       index.push({
         ...base,
         id: `${exp.circuitId}:theory:${i}`,
-        section: 'Theory',
+        section: "Theory",
         text: paragraph,
         previewImage: content.previewImage,
       });
@@ -53,7 +60,7 @@ export function buildSearchIndex(
       index.push({
         ...base,
         id: `${exp.circuitId}:procedure:${i}`,
-        section: 'Procedure',
+        section: "Procedure",
         text: body,
         previewImage: content.previewImage,
       });
@@ -63,7 +70,7 @@ export function buildSearchIndex(
       index.push({
         ...base,
         id: `${exp.circuitId}:apparatus:${i}`,
-        section: 'Apparatus',
+        section: "Apparatus",
         text: item,
         previewImage: content.previewImage,
       });
