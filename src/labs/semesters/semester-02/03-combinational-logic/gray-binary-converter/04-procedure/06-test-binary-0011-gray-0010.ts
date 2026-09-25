@@ -1,4 +1,4 @@
-import { type SceneProcedureStep } from '@/labs/experiments/types';
+import { type SceneProcedureStep } from "@/labs/experiments/types";
 
 export const step: SceneProcedureStep = {
   label: "Test: Binary 0011 → Gray 0010.",

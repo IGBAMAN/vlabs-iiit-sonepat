@@ -1,9 +1,14 @@
-import Link from 'next/link';
-import { Prose, DocEyebrow, DocNav, DocNavLink } from '@/sections/docs/doc-primitives';
+import Link from "next/link";
+import {
+  Prose,
+  DocEyebrow,
+  DocNav,
+  DocNavLink,
+} from "@/sections/docs/doc-primitives";
 
 export const metadata = {
-  title: 'TypeScript Types — VLabs Docs',
-  description: 'Full TypeScript type reference for the VLabs lab system.',
+  title: "TypeScript Types — VLabs Docs",
+  description: "Full TypeScript type reference for the VLabs lab system.",
 };
 
 export default function TypesPage() {
@@ -96,8 +101,12 @@ type BuildFn = (
 ) => THREE.Group | null;`}</pre>
 
       <DocNav>
-        <DocNavLink as={Link} href="/docs/columns" data-dir="prev">Column layout guide</DocNavLink>
-        <DocNavLink as={Link} href="/docs/constraints" data-dir="next">Constraints &amp; rules</DocNavLink>
+        <DocNavLink as={Link} href="/docs/columns" data-dir="prev">
+          Column layout guide
+        </DocNavLink>
+        <DocNavLink as={Link} href="/docs/constraints" data-dir="next">
+          Constraints &amp; rules
+        </DocNavLink>
       </DocNav>
     </Prose>
   );

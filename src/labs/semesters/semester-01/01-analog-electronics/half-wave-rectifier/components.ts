@@ -1,4 +1,4 @@
-import { type ComponentInstance } from '@/labs/types';
+import { type ComponentInstance } from "@/labs/types";
 
 /**
  * Half-Wave Rectifier
@@ -17,74 +17,89 @@ import { type ComponentInstance } from '@/labs/types';
  *   col 18–19  c1     (capacitor, filter — added in a later step)
  */
 export const components: ComponentInstance[] = [
-  { id: 'bb', type: 'breadboard' },
+  { id: "bb", type: "breadboard" },
 
   // AC input source (transformer secondary / function generator).
   // terminals[] wire the jack's own +/- leads straight to the rails.
   {
-    id: 'ac_src',
-    type: 'dc-jack',
-    mountedAt: { board: 'bb', col: 1, row: 'a' },
+    id: "ac_src",
+    type: "dc-jack",
+    mountedAt: { board: "bb", col: 1, row: "a" },
     terminals: [
-      { board: 'bb', rail: 'vcc_top', col: 5 },
-      { board: 'bb', rail: 'gnd_top', col: 5 },
+      { board: "bb", rail: "vcc_top", col: 5 },
+      { board: "bb", rail: "gnd_top", col: 5 },
     ],
   },
 
   // D1 — rectifying diode (1N4007), rendered as a yellow LED stand-in.
-  { id: 'd1', type: 'led', color: 'yellow', mountedAt: { board: 'bb', col: 8, row: 'c' } },
+  {
+    id: "d1",
+    type: "led",
+    color: "yellow",
+    mountedAt: { board: "bb", col: 8, row: "c" },
+  },
 
   // R_L — load resistor across which the rectified output is read.
-  { id: 'r1', type: 'resistor', ohms: 1000, mountedAt: { board: 'bb', col: 11, row: 'c' } },
+  {
+    id: "r1",
+    type: "resistor",
+    ohms: 1000,
+    mountedAt: { board: "bb", col: 11, row: "c" },
+  },
 
   // Bench multimeter, probing across R_L (p1 = input side, p2 = ground side).
   {
-    id: 'dmm',
-    type: 'potentiometer',
-    mountedAt: { board: 'bb', col: 1, row: 'b' },
+    id: "dmm",
+    type: "potentiometer",
+    mountedAt: { board: "bb", col: 1, row: "b" },
     probes: [
-      { board: 'bb', col: 11, row: 'c' },
-      { board: 'bb', col: 14, row: 'c' },
+      { board: "bb", col: 11, row: "c" },
+      { board: "bb", col: 14, row: "c" },
     ],
   },
 
   // C1 — filter capacitor, wired in parallel with R_L (added mid-procedure).
-  { id: 'c1', type: 'capacitor', capacitance: 100, mountedAt: { board: 'bb', col: 18, row: 'c' } },
+  {
+    id: "c1",
+    type: "capacitor",
+    capacitance: 100,
+    mountedAt: { board: "bb", col: 18, row: "c" },
+  },
 
   // Wires
   {
-    id: 'w_src_d1',
-    type: 'wire',
-    color: 'red',
-    from: { board: 'bb', rail: 'vcc_top', col: 5 },
-    to: { led: 'd1', end: 'anode' },
+    id: "w_src_d1",
+    type: "wire",
+    color: "red",
+    from: { board: "bb", rail: "vcc_top", col: 5 },
+    to: { led: "d1", end: "anode" },
   },
   {
-    id: 'w_d1_r1',
-    type: 'wire',
-    color: 'white',
-    from: { led: 'd1', end: 'cathode' },
-    to: { component: 'r1', end: 'p1' },
+    id: "w_d1_r1",
+    type: "wire",
+    color: "white",
+    from: { led: "d1", end: "cathode" },
+    to: { component: "r1", end: "p1" },
   },
   {
-    id: 'w_r1_gnd',
-    type: 'wire',
-    color: 'black',
-    from: { component: 'r1', end: 'p2' },
-    to: { board: 'bb', rail: 'gnd_top', col: 5 },
+    id: "w_r1_gnd",
+    type: "wire",
+    color: "black",
+    from: { component: "r1", end: "p2" },
+    to: { board: "bb", rail: "gnd_top", col: 5 },
   },
   {
-    id: 'w_c1_top',
-    type: 'wire',
-    color: 'white',
-    from: { component: 'c1', end: 'p1' },
-    to: { component: 'r1', end: 'p1' },
+    id: "w_c1_top",
+    type: "wire",
+    color: "white",
+    from: { component: "c1", end: "p1" },
+    to: { component: "r1", end: "p1" },
   },
   {
-    id: 'w_c1_bot',
-    type: 'wire',
-    color: 'black',
-    from: { component: 'c1', end: 'p2' },
-    to: { component: 'r1', end: 'p2' },
+    id: "w_c1_bot",
+    type: "wire",
+    color: "black",
+    from: { component: "c1", end: "p2" },
+    to: { component: "r1", end: "p2" },
   },
 ];

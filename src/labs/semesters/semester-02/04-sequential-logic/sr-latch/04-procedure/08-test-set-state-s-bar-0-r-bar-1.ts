@@ -1,4 +1,4 @@
-import { type SceneProcedureStep } from '@/labs/experiments/types';
+import { type SceneProcedureStep } from "@/labs/experiments/types";
 
 export const step: SceneProcedureStep = {
   label: "Test SET state (S_bar=0, R_bar=1).",

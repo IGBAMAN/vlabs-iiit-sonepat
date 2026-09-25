@@ -1,4 +1,4 @@
-import { type ObservationSection } from '@/labs/lab-content.types';
+import { type ObservationSection } from "@/labs/lab-content.types";
 
 export const observations: ObservationSection = {
   id: "observations",
@@ -16,54 +16,14 @@ export const observations: ObservationSection = {
       "Region",
     ],
     rows: [
-      [
-        0,
-        "0.00",
-        "0.000",
-        "Off",
-      ],
-      [
-        1.5,
-        "0.00",
-        "0.000",
-        "Off",
-      ],
-      [
-        2.5,
-        "0.25",
-        "0.500",
-        "Saturation",
-      ],
-      [
-        3,
-        "1.00",
-        "1.000",
-        "Saturation",
-      ],
-      [
-        3.5,
-        "2.25",
-        "1.500",
-        "Saturation",
-      ],
-      [
-        4,
-        "4.00",
-        "2.000",
-        "Saturation",
-      ],
-      [
-        4.5,
-        "6.25",
-        "2.500",
-        "Saturation",
-      ],
-      [
-        5,
-        "9.00",
-        "3.000",
-        "Saturation",
-      ],
+      [0, "0.00", "0.000", "Off"],
+      [1.5, "0.00", "0.000", "Off"],
+      [2.5, "0.25", "0.500", "Saturation"],
+      [3, "1.00", "1.000", "Saturation"],
+      [3.5, "2.25", "1.500", "Saturation"],
+      [4, "4.00", "2.000", "Saturation"],
+      [4.5, "6.25", "2.500", "Saturation"],
+      [5, "9.00", "3.000", "Saturation"],
     ],
   },
 };

@@ -6,4 +6,3 @@ export type MenuNavChildPreview = {
   title: string;
   description: string;
 };
-

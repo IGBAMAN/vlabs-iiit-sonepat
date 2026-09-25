@@ -1,6 +1,6 @@
-import { type IconComponent } from '@/icons';
+import { type IconComponent } from "@/icons";
 
-import { type MenuNavChildPreview } from './menu-nav-child-preview';
+import { type MenuNavChildPreview } from "./menu-nav-child-preview";
 
 export type MenuNavChild = {
   label: string;
@@ -10,4 +10,3 @@ export type MenuNavChild = {
   icon: IconComponent;
   preview: MenuNavChildPreview;
 };
-
