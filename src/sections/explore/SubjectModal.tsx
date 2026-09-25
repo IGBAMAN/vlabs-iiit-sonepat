@@ -16,35 +16,44 @@ type Props = {
 };
 
 function NotchedPreviewBox({ children }: { children: React.ReactNode }) {
+  // Polygon clip path matching Image 2 shallow notch shape:
+  // Top horizontal to 94.5%, step down to 16%, shallow outward chamfer to 98.5% at y=32%,
+  // vertical edge to 68%, shallow inward chamfer to 94.5% at y=84%, step down to bottom 99.25%.
+  const polygonClip =
+    'polygon(0.75% 0.75%, 94.5% 0.75%, 94.5% 16%, 98.5% 32%, 98.5% 68%, 94.5% 84%, 94.5% 99.25%, 0.75% 99.25%)';
+
   return (
     <div className="relative aspect-square w-full shrink-0">
-      {/* Background SVG with subtle right-side tab shape matching reference image */}
-      <svg
-        className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
-        viewBox="0 0 400 400"
-        preserveAspectRatio="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M 8 1.5 H 374 A 8 8 0 0 1 382 9.5 V 90 L 400 140 V 260 L 382 310 V 390.5 A 8 8 0 0 1 374 398.5 H 8 A 8 8 0 0 1 0 390.5 V 9.5 A 8 8 0 0 1 8 1.5 Z"
-          fill="var(--color-neutral)"
-          stroke="var(--color-black-10)"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-      </svg>
+      {/* 1. Neutral background surface fill clipped to exact polygon (no grey leak) */}
+      <div
+        className="absolute inset-0 bg-[var(--color-neutral)]"
+        style={{ clipPath: polygonClip }}
+      />
 
-      {/* 3D Model canvas inner content clipped to the subtle tab shape */}
+      {/* 2. 3D Model canvas inner content (z-10) clipped to symmetrical polygon */}
       <div
         className="relative z-10 w-full h-full overflow-hidden"
-        style={{
-          clipPath:
-            'polygon(0% 0%, 95.5% 0%, 95.5% 22.5%, 100% 35%, 100% 65%, 95.5% 77.5%, 95.5% 100%, 0% 100%)',
-          borderRadius: '8px 0px 0px 8px',
-        }}
+        style={{ clipPath: polygonClip }}
       >
         {children}
       </div>
+
+      {/* 3. Symmetrical Border SVG overlay (z-20) layered OVER 3D canvas */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none z-20"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <polygon
+          points="0.75,0.75 94.5,0.75 94.5,16 98.5,32 98.5,68 94.5,84 94.5,99.25 0.75,99.25"
+          fill="none"
+          stroke="var(--color-black-40)"
+          strokeWidth="1.75"
+          strokeLinejoin="miter"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
     </div>
   );
 }
@@ -156,9 +165,9 @@ export function SubjectModal({ subject, onClose }: Props) {
               {activeIndex !== null ? activeExp?.title : subject.title}
             </h2>
 
-            {activeIndex !== null && activeExp?.description && (
+            {(activeIndex !== null ? activeExp?.description : subject.description) && (
               <Body size="sm" muted className="text-[13px] leading-[1.5]">
-                {activeExp.description}
+                {activeIndex !== null ? activeExp?.description : subject.description}
               </Body>
             )}
 
