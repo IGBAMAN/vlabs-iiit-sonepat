@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 
 import { MathText } from "@/ui/Math";
@@ -23,7 +23,8 @@ import {
 } from "@/labs/resolve-circuit-step-index";
 import { type Circuit } from "@/labs/types";
 import { type StepMarker } from "@/labs/LabScene";
-import { BlobOptions } from "buffer";
+
+const EMPTY_MARKERS: StepMarker[] = [];
 
 // ── Dynamic imports (all client-only Three.js) ────────────────────────────
 const LabSceneCanvas = dynamic(
@@ -420,7 +421,7 @@ function FloatingCardContent({
 }
 
 // ── Scene renderer per section type ──────────────────────────────────────
-function SceneRenderer({
+const SceneRenderer = React.memo(function SceneRenderer({
   section,
   circuit,
   sceneStepIndex,
@@ -453,7 +454,7 @@ function SceneRenderer({
       markers={activeMarkers}
     />
   );
-}
+});
 
 // ── Main component ─────────────────────────────────────────────────────────
 type Props = { content: LabContent };
@@ -566,13 +567,13 @@ function LabPageStandard({ content }: Props) {
   const circuit: Circuit =
     ALL_CIRCUITS.find((c) => c.id === content.circuitId) ?? BREADBOARD_ONLY;
 
-  const { sceneStepIndex, activeMarkers } = (() => {
+  const { sceneStepIndex, activeMarkers } = useMemo(() => {
     if (activeSection?.type === "procedure") {
       const step = activeSection.steps[procedureStepIndex];
       if (!step) {
         return {
           sceneStepIndex: resolveFinalCircuitStepIndex(circuit),
-          activeMarkers: [] as StepMarker[],
+          activeMarkers: EMPTY_MARKERS,
         };
       }
       return {
@@ -580,7 +581,7 @@ function LabPageStandard({ content }: Props) {
           circuit,
           procedureStepIndex,
         ),
-        activeMarkers: step.markers ?? [],
+        activeMarkers: step.markers ?? EMPTY_MARKERS,
       };
     }
 
@@ -590,12 +591,12 @@ function LabPageStandard({ content }: Props) {
     ) {
       return {
         sceneStepIndex: resolveFinalCircuitStepIndex(circuit),
-        activeMarkers: [] as StepMarker[],
+        activeMarkers: EMPTY_MARKERS,
       };
     }
 
-    return { sceneStepIndex: 0, activeMarkers: [] as StepMarker[] };
-  })();
+    return { sceneStepIndex: 0, activeMarkers: EMPTY_MARKERS };
+  }, [activeSection, procedureStepIndex, circuit]);
   const handleToggleMic = () => {
     // If turning the mic ON, unlock the audio context via this user gesture
     if (!isMicOn) {
@@ -629,7 +630,19 @@ function LabPageStandard({ content }: Props) {
   );
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-[var(--color-neutral)]">
+    <div className="flex h-dvh overflow-hidden bg-[var(--color-neutral)] relative">
+      {/* ── Scene area (always full screen, stable viewport so Three.js never resizes or resets on sidebar toggle) ── */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-auto">
+        {activeSection && (
+          <SceneRenderer
+            section={activeSection}
+            circuit={circuit}
+            sceneStepIndex={sceneStepIndex}
+            activeMarkers={activeMarkers}
+          />
+        )}
+      </div>
+
       {/* ── Sidebar ── */}
       <LabSidebar
         title={content.title}
@@ -649,31 +662,23 @@ function LabPageStandard({ content }: Props) {
         onToggleCollapse={setCollapsed}
       />
 
-      {/* ── Scene area (always full screen) ── */}
-      <div className="flex-1 min-w-0 overflow-hidden relative">
-        {/* Scene fills the full area */}
-        {activeSection && (
-          <SceneRenderer
-            section={activeSection}
-            circuit={circuit}
-            sceneStepIndex={sceneStepIndex}
-            activeMarkers={activeMarkers}
-          />
-        )}
-
+      {/* ── Overlay controls & floating cards ── */}
+      <div className="flex-1 min-w-0 overflow-hidden relative pointer-events-none z-10">
         {/* Floating text card over scene */}
         {activeSection && (
-          <FloatingLabCard>
-            <FloatingCardContent
-              key={contentStreamKey(activeSection, procedureStepIndex)}
-              section={activeSection}
-              procedureStepIndex={procedureStepIndex}
-            />
-          </FloatingLabCard>
+          <div className="pointer-events-auto">
+            <FloatingLabCard>
+              <FloatingCardContent
+                key={contentStreamKey(activeSection, procedureStepIndex)}
+                section={activeSection}
+                procedureStepIndex={procedureStepIndex}
+              />
+            </FloatingLabCard>
+          </div>
         )}
 
         {/* Top-Right Floating Controls */}
-        <div className="absolute top-6 right-6 flex items-center gap-4 z-[100]">
+        <div className="absolute top-6 right-6 flex items-center gap-4 z-[100] pointer-events-auto">
           {/* Language & Mic Pill */}
           <div className="relative flex items-center p-1.5 gap-2 bg-white/90 backdrop-blur-md border border-[var(--color-black-10)] rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.04)] transition-transform duration-300">
             {/* Mic Button */}

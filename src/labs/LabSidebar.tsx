@@ -755,11 +755,11 @@ export function LabSidebar({
 
       {/* ── COLLAPSED VIEW (MATCHING IMAGES 1 & 3) ── */}
       {collapsed && (
-        <div className="flex flex-col items-center h-full w-[58px] py-3 rounded-[20px] relative overflow-visible">
+        <div className="flex flex-col items-center h-full w-[58px] py-2.5 rounded-[20px] relative overflow-visible">
           {/* Back button to /explore */}
           <Link
             href="/explore"
-            className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--color-black-5)] transition-colors mb-2 cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--color-black-5)] transition-colors mb-1.5 cursor-pointer"
             title="Return to Semester Labs (/explore)"
             aria-label="Back to Semester Labs"
           >
@@ -767,7 +767,7 @@ export function LabSidebar({
           </Link>
 
           {/* ── Header with FLOATING EXPAND ICON SNUG ON SIDEBAR EDGE (Images 1 & 3) ── */}
-          <div className="relative mb-3 flex items-center justify-center w-full">
+          <div className="relative mb-2 flex items-center justify-center w-full">
             {/* Code icon inside the bar */}
             <div className="w-8 h-8 flex items-center justify-center rounded-[8px] border border-black/[0.08] bg-[#f7f7f8] text-[var(--ink-muted)] font-mono text-[11px] font-semibold select-none">
               {"<>"}
@@ -775,7 +775,10 @@ export function LabSidebar({
 
             {/* Floating Expand button close to the sidebar dock edge */}
             <button
-              onClick={() => onToggleCollapse(false)}
+              onClick={() => {
+                setCollapsedProcedureOpen(false);
+                onToggleCollapse(false);
+              }}
               aria-label="Expand sidebar"
               title="Expand sidebar"
               className="absolute -right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-[5px] bg-white border border-black/[0.12] shadow-[0_1px_4px_rgba(0,0,0,0.08)] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:border-black/[0.25] transition-all cursor-pointer p-0 z-50"
@@ -787,25 +790,28 @@ export function LabSidebar({
           {/* Search button */}
           <button
             onClick={() => {
+              setCollapsedProcedureOpen(false);
               onToggleCollapse(false);
               setTimeout(() => searchInputRef.current?.focus(), 80);
             }}
             aria-label="Search"
             title="Search (⌘S)"
-            className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--color-black-5)] transition-colors mb-3 cursor-pointer p-0"
+            className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--color-black-5)] transition-colors mb-2 cursor-pointer p-0"
           >
             <SearchIcon />
           </button>
 
-          <div className="w-6 h-[1px] bg-black/[0.08] mb-2" />
+          <div className="w-6 h-[1px] bg-black/[0.08] mb-1.5" />
 
           {/* Section icons list */}
-          <div className="flex flex-col items-center space-y-2 px-2 overflow-visible w-full">
+          <div className="flex flex-col items-center space-y-1.5 px-2 overflow-visible w-full">
             {sections.map((section) => {
               const isActive = section.id === activeSectionId;
               const isProcedure = section.type === "procedure";
               const isOpen = isProcedure && collapsedProcedureOpen;
               const stepCount = (section as any).steps?.length || 0;
+              const stepRowHeight = 30;
+              const treeHeight = stepCount * stepRowHeight;
 
               return (
                 <div
@@ -836,18 +842,20 @@ export function LabSidebar({
                   </button>
 
                   {/* ── EXPANDING TREE CONNECTOR INSIDE SIDEBAR & FLOATING CARD OUTSIDE (Image 1) ── */}
-                  {/* Only rendered when isOpen is true so it completely disappears when closed */}
-                  {isProcedure && stepCount > 0 && isOpen && (
+                  {/* Smooth height and opacity accordion transition so dropping down is ultra-smooth */}
+                  {isProcedure && stepCount > 0 && (
                     <div
-                      className="w-full overflow-visible relative flex items-start animate-in fade-in duration-150"
+                      className="w-full overflow-visible relative flex items-start transition-[height,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
                       style={{
-                        height: `${stepCount * 36}px`,
+                        height: isOpen ? `${treeHeight}px` : "0px",
+                        opacity: isOpen ? 1 : 0,
+                        pointerEvents: isOpen ? "auto" : "none",
                       }}
                     >
                       {/* Tree connecting dashes and lines INSIDE the sidebar width */}
                       <svg
                         width="58"
-                        height={stepCount * 36}
+                        height={treeHeight}
                         className="shrink-0 overflow-visible pointer-events-none"
                       >
                         {/* Vertical line centered at x=29 directly under procedure icon */}
@@ -855,7 +863,7 @@ export function LabSidebar({
                           x1="29"
                           y1="0"
                           x2="29"
-                          y2={(stepCount - 1) * 36 + 18}
+                          y2={(stepCount - 1) * stepRowHeight + 15}
                           stroke="#c4c4c8"
                           strokeWidth="1.4"
                           strokeLinecap="round"
@@ -863,7 +871,7 @@ export function LabSidebar({
 
                         {/* Horizontal branch lines extending from center of sidebar out to the right edge */}
                         {Array.from({ length: stepCount }).map((_, i) => {
-                          const y = i * 36 + 18;
+                          const y = i * stepRowHeight + 15;
                           const isLast = i === stepCount - 1;
 
                           if (isLast) {
@@ -894,8 +902,14 @@ export function LabSidebar({
                         })}
                       </svg>
 
-                      {/* ── Steps Card OUTSIDE the sidebar (contains NO lines inside) ── */}
-                      <div className="absolute left-[calc(100%+3px)] top-0 z-[999] bg-white rounded-[14px] border border-black/[0.08] shadow-[0_6px_28px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.04)] p-0.5 min-w-[200px] max-w-[260px] flex flex-col pointer-events-auto">
+                      {/* ── Steps Card OUTSIDE the sidebar with springy popover transition ── */}
+                      <div
+                        className={`absolute left-[calc(100%+6px)] top-0 z-[999] bg-white rounded-[14px] border border-black/[0.08] shadow-[0_8px_30px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.04)] p-1 min-w-[210px] max-w-[280px] max-h-[min(340px,calc(100dvh-120px))] overflow-y-auto lab-card-scroll flex flex-col pointer-events-auto transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top-left ${
+                          isOpen
+                            ? "opacity-100 scale-100 translate-x-0"
+                            : "opacity-0 scale-95 -translate-x-2 pointer-events-none"
+                        }`}
+                      >
                         {(section as any).steps.map(
                           (step: ProcedureStep, i: number) => {
                             const isStepActive =
@@ -905,7 +919,7 @@ export function LabSidebar({
                             return (
                               <div
                                 key={i}
-                                className="h-[36px] flex items-center px-1"
+                                className="h-[30px] flex items-center px-0.5"
                               >
                                 <button
                                   onClick={() => {
@@ -913,10 +927,10 @@ export function LabSidebar({
                                     onSelectProcedureStep(i, section);
                                   }}
                                   title={stepLabel}
-                                  className={`w-full text-left font-sans text-[12px] h-[32px] px-2.5 rounded-[8px] truncate transition-colors cursor-pointer border-none outline-none flex items-center ${
+                                  className={`w-full text-left font-sans text-[12px] h-[26px] px-2.5 rounded-[7px] truncate transition-colors cursor-pointer border-none outline-none flex items-center ${
                                     isStepActive
                                       ? "bg-[#f4f4f5] text-[var(--ink)] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
-                                      : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.03]"
+                                      : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-black/[0.04]"
                                   }`}
                                 >
                                   {stepLabel}
