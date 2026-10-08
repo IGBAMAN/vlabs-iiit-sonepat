@@ -23,6 +23,12 @@ import {
 } from "./semester-01/01-analog-electronics/03-zener-diode";
 
 import {
+  HalfWaveAndCenterTappedRectifierCircuit,
+  HalfWaveAndCenterTappedRectifierContent,
+  halfWaveAndCenterTappedRectifierExperiment,
+} from "./semester-01/01-analog-electronics/04-half-wave-and-center-tapped-rectifier";
+
+import {
   HalfWaveRectifierCircuit,
   HalfWaveRectifierContent,
   halfWaveRectifierExperiment,
@@ -531,6 +537,21 @@ export const SEMESTER_SUBJECTS: readonly SemesterSubjectCatalog[] = [
         ZenerVoltageRegulatorCircuit,
         ZenerVoltageRegulatorContent,
         ["zener", "voltage regulator", "line regulation", "load regulation"],
+      ),
+      fromBuilt(
+        halfWaveAndCenterTappedRectifierExperiment,
+        HalfWaveAndCenterTappedRectifierCircuit,
+        HalfWaveAndCenterTappedRectifierContent,
+        [
+          "rectifier",
+          "half-wave",
+          "center-tapped",
+          "full-wave",
+          "transformer",
+          "diode",
+          "filter",
+          "ripple",
+        ],
       ),
       fromBuilt(
         halfWaveRectifierExperiment,
