@@ -11,10 +11,9 @@ import { procedureSteps } from "./04-procedure";
 
 export const bcdXs3ConverterExperiment: ExperimentDefinition = {
   id: "bcd-xs3-converter",
-  title:
-    "To design BCD to Excess-3 code converter, gray code to binary converter, binary to gray code converter",
+  title: "BCD to Excess-3 Code Converter",
   description:
-    "Design and verify BCD to Excess-3 code converter, Gray code to binary converter, and binary to Gray code converter using standard 74HC series logic gate ICs on a solderless breadboard.",
+    "Design and verify BCD to Excess-3 code converter using standard 74HC series logic gate ICs on a solderless breadboard.",
   truthTable: {
     inputs: ["A", "B", "C", "D"],
     outputs: ["W", "X", "Y", "Z"],
